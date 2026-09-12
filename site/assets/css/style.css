@@ -107,9 +107,9 @@ a{ color: inherit; text-decoration:none; }
   font-family: var(--display-black);
   font-size: clamp(2.8rem, 7vw, 5.2rem);
   line-height: 0.98;
-  margin: 0 0 26px;
+  margin: 0 0 38px;
   letter-spacing: -0.01em;
-  max-width: 15ch;
+  max-width: 950px;
   text-transform: uppercase;
 }
 .hero h1 .accent{
@@ -118,9 +118,9 @@ a{ color: inherit; text-decoration:none; }
   font-size: 1.2em; line-height: 1; vertical-align: -0.06em;
 }
 .hero p{
-  font-size: 1.1rem; color: var(--ink-soft); max-width: 54ch; margin: 0 0 34px;
+  font-size: 1.1rem; color: var(--ink-soft); max-width: 650px; margin: 0 0 38px;
 }
-.hero-actions{ display:flex; gap:16px; flex-wrap:wrap; }
+.hero-actions{ display:flex; gap:20px; flex-wrap:wrap; }
 .btn-primary, .btn-ghost{
   display:inline-flex; align-items:center; gap:8px;
   padding: 13px 26px; border-radius: 999px; font-weight:600; font-size:0.95rem;
