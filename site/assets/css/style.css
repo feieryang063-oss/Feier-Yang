@@ -96,7 +96,9 @@ a{ color: inherit; text-decoration:none; }
 }
 .bunny-anchor img{ width:100%; transition: transform .2s ease; }
 .bunny-anchor:hover img, .bunny-anchor:focus-visible img{ transform: scale(1.05); }
-@media (max-width: 980px){ .bunny-anchor{ display:none; } }
+/* hidden until the viewport is wide enough that the mascot's click area
+   mostly clears the content column (it captures clicks now that it links) */
+@media (max-width: 1250px){ .bunny-anchor{ display:none; } }
 
 /* ---------- Hero ---------- */
 .hero{ padding: 28px 0 76px; }
@@ -145,6 +147,12 @@ a{ color: inherit; text-decoration:none; }
 .about-grid{
   display:grid; grid-template-columns: 300px 1fr; gap: 56px; align-items:start;
 }
+/* set by the portrait's onerror: without a photo the text takes the full width
+   instead of being left in the 300px portrait column */
+.about-grid.no-portrait{ grid-template-columns: 1fr; }
+.about-grid.no-portrait .about-portrait{ display:none; }
+/* keep the measure close to what the two-column layout gives */
+.about-grid.no-portrait .about-body p{ max-width: 70ch; }
 .about-portrait{
   border-radius: var(--radius); overflow:hidden; aspect-ratio: 4/5; background: var(--bg-deep);
   border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink);
@@ -203,10 +211,7 @@ a{ color: inherit; text-decoration:none; }
 .card-body p{ color: var(--ink-soft); font-size:0.92rem; margin:0; flex:1; }
 .card-meta{ margin-top:16px; font-family: var(--mono); font-size:0.72rem; color: var(--ink-soft); display:flex; justify-content:space-between; }
 
-/* ---------- Footer / contact ---------- */
-.contact{ text-align:center; }
-.contact h2{ font-family: var(--display-black); font-size: clamp(2.2rem,5.5vw,3.4rem); margin: 14px 0 26px; text-transform:uppercase; }
-.contact-actions{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+/* ---------- Footer ---------- */
 footer{ padding: 44px 0; border-top:2px solid var(--ink); }
 footer .wrap{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
 footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(--mono); }
