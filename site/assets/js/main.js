@@ -4,9 +4,13 @@ document.addEventListener('DOMContentLoaded', function () {
   var toggle = document.querySelector('.nav-toggle');
   var links = document.querySelector('.nav-links');
   if (toggle && links) {
-    toggle.addEventListener('click', function () { links.classList.toggle('open'); });
+    var syncExpanded = function () {
+      toggle.setAttribute('aria-expanded', links.classList.contains('open'));
+    };
+    syncExpanded();
+    toggle.addEventListener('click', function () { links.classList.toggle('open'); syncExpanded(); });
     links.querySelectorAll('a').forEach(function (a) {
-      a.addEventListener('click', function () { links.classList.remove('open'); });
+      a.addEventListener('click', function () { links.classList.remove('open'); syncExpanded(); });
     });
   }
 
@@ -58,8 +62,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }, { passive: true });
   }
 
-  /* ---------- Cards: 3D tilt (max 4.6deg) ---------- */
-  var tiltMax = 4.6;
+  /* ---------- Cards: 3D tilt ---------- */
+  var tiltMax = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tilt-max')) || 4.6;
   document.querySelectorAll('.tilt-frame').forEach(function (frame) {
     var media = frame.querySelector('.card-media');
     frame.addEventListener('mousemove', function (e) {
