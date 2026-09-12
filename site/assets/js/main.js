@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ---------- Bunny: sway with scroll, like wind ---------- */
   var bunny = document.querySelector('.bunny-anchor');
   if (bunny) {
+    var hero = document.body.classList.contains('home') ? document.querySelector('.hero') : null;
     var ticking = false;
     window.addEventListener('scroll', function () {
       if (ticking) return;
@@ -57,6 +58,12 @@ document.addEventListener('DOMContentLoaded', function () {
         var y = window.scrollY;
         var tilt = Math.sin(y / 260) * 6;
         bunny.style.transform = 'rotate(' + tilt.toFixed(2) + 'deg)';
+        if (hero) {
+          var heroBottom = hero.offsetTop + hero.offsetHeight;
+          var visible = y < heroBottom - 40;
+          bunny.style.opacity = visible ? '1' : '0';
+          bunny.style.pointerEvents = visible ? 'auto' : 'none';
+        }
         ticking = false;
       });
     }, { passive: true });

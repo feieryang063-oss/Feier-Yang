@@ -93,13 +93,24 @@ a{ color: inherit; text-decoration:none; }
 /* ---------- Bunny mascot, fixed left, sways with scroll, links to About ---------- */
 .bunny-anchor{
   position:fixed; left:18px; bottom:0; z-index:5; width:150px; cursor:pointer;
-  transform-origin: 50% 100%; will-change: transform;
+  transform-origin: 50% 100%; will-change: transform; transition: opacity .25s ease;
 }
 .bunny-anchor img{ width:100%; transition: transform .2s ease; }
 .bunny-anchor:hover img, .bunny-anchor:focus-visible img{ transform: scale(1.05); }
 /* hidden until the viewport is wide enough that the mascot's click area
    mostly clears the content column (it captures clicks now that it links) */
 @media (max-width: 1250px){ .bunny-anchor{ display:none; } }
+
+/* Homepage only: sits beside the hero CTA instead of the bottom-left corner.
+   left tracks the CTA row's right edge at a constant ~100px offset — .wrap
+   centers as (100vw-1180px)/2 + 32px padding once the viewport clears
+   1180+64px, so content-left = 50vw - 558px; the CTA row is ~278px wide, so
+   left: 50vw - 180px keeps the same ~100px gap from the buttons at any width.
+   main.js fades it out once scroll passes the hero, since at this position
+   it would otherwise sit on top of the project cards below. */
+body.home .bunny-anchor{
+  left: calc(50vw - 180px); top: 555px; bottom: auto; width: 84px;
+}
 
 /* ---------- Hero ---------- */
 .hero{ padding: 28px 0 76px; }
