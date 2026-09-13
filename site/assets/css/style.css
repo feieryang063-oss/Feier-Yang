@@ -284,3 +284,26 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
   .nav-links.open{ transform: translateX(0); }
   .nav-toggle{ display:block; }
 }
+
+/* ---------- Scroll-in reveal ---------- */
+.reveal{
+  opacity: 0; transform: translateY(28px);
+  transition: opacity .7s cubic-bezier(.2,.7,.3,1), transform .7s cubic-bezier(.2,.7,.3,1);
+}
+.reveal.is-visible{ opacity: 1; transform: translateY(0); }
+
+/* ---------- Hero entrance (plays once on load) ---------- */
+.hero-copy > *{
+  opacity: 0; transform: translateY(18px);
+  animation: hero-in .7s cubic-bezier(.2,.7,.3,1) forwards;
+}
+.hero-copy > h1{ animation-delay: .05s; }
+.hero-copy > p{ animation-delay: .2s; }
+.hero-copy > .hero-actions{ animation-delay: .32s; }
+.hero-art{ opacity:0; transform: translateY(18px); animation: hero-in .8s cubic-bezier(.2,.7,.3,1) .3s forwards; }
+@keyframes hero-in{ to{ opacity:1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce){
+  .reveal{ opacity:1; transform:none; transition:none; }
+  .hero-copy > *, .hero-art{ animation:none; opacity:1; transform:none; }
+}

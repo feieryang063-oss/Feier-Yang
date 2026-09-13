@@ -79,6 +79,30 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  /* ---------- Scroll-in reveal ---------- */
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var revealSelectors = '.section-head, .card, .about-grid, .project-section, .project-cover, .project-links, .project-video';
+  var revealEls = document.querySelectorAll(revealSelectors);
+  if (revealEls.length && !reduceMotion && 'IntersectionObserver' in window) {
+    var cardIndex = 0;
+    revealEls.forEach(function (el) {
+      el.classList.add('reveal');
+      if (el.classList.contains('card')) {
+        el.style.transitionDelay = ((cardIndex % 3) * 0.08).toFixed(2) + 's';
+        cardIndex++;
+      }
+    });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(function (el) { io.observe(el); });
+  }
+
   /* ---------- Filters ---------- */
   var filterBtns = document.querySelectorAll('.filter-btn');
   var cards = document.querySelectorAll('[data-category]');
