@@ -105,9 +105,11 @@ a{ color: inherit; text-decoration:none; }
   display:grid; grid-template-columns: 1fr minmax(325px, 500px); gap: 40px; align-items:start;
 }
 .hero-copy{ min-width:0; }
-.hero-art{ display:block; margin-top: 16px; }
-.hero-art img{ width:100%; transition: transform .2s ease; }
-.hero-art:hover img, .hero-art:focus-visible img{ transform: scale(1.03); }
+.hero-art{ display:block; margin-top: 16px; position:relative; }
+.hero-art-layer{ width:100%; display:block; transition: transform .2s ease; }
+.hero-art-paper, .hero-art-bunny{ position:absolute; top:0; left:0; }
+.hero-art:hover .hero-art-desk, .hero-art:hover .hero-art-paper,
+.hero-art:focus-visible .hero-art-desk, .hero-art:focus-visible .hero-art-paper{ transform: scale(1.03); }
 @media (max-width: 980px){
   .hero-grid{ grid-template-columns: 1fr; }
   .hero-art{ display:none; }
