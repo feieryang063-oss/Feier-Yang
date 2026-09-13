@@ -213,7 +213,7 @@ a{ color: inherit; text-decoration:none; }
   .work-tiles{ max-width: calc((100vh - 170px) * 1.6255 + 14px); }
 }
 .work-tile{
-  aspect-ratio: 1949/1199; border-radius:12px; overflow:hidden; background: var(--bg-deep);
+  aspect-ratio: 1949/1199; border-radius:12px; overflow:hidden; background: #fff;
 }
 .work-tile img{ width:100%; height:100%; object-fit:contain; transition: transform .3s ease; }
 .work-tile:hover img{ transform: scale(1.05); }
