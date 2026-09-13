@@ -1,0 +1,8 @@
+AuthType Basic
+AuthName "Restricted"
+AuthUserFile /home/u219717272/domains/feieryang.com/public_html/.htpasswd
+Require valid-user
+
+<Files ".htpasswd">
+  Require all denied
+</Files>
