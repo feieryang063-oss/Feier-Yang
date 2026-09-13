@@ -171,8 +171,15 @@ a{ color: inherit; text-decoration:none; }
   border:none; box-shadow:none; background:none; aspect-ratio:auto;
 }
 .about-grid.no-portrait .about-bunny{ display:block; width:62%; }
-.about-bunny img{ width:100%; transition: transform .2s ease; }
-.about-bunny:hover img, .about-bunny:focus-visible img{ transform: scale(1.05); }
+.about-bunny img{ width:100%; transform-origin: bottom center; }
+.about-bunny:hover img, .about-bunny:focus-visible img{ animation: bunny-wobble .6s ease-in-out; }
+@keyframes bunny-wobble{
+  0%, 100%{ transform: rotate(0deg); }
+  20%{ transform: rotate(-8deg); }
+  40%{ transform: rotate(7deg); }
+  60%{ transform: rotate(-5deg); }
+  80%{ transform: rotate(4deg); }
+}
 .about-body p{ font-size:1.05rem; color: var(--ink-soft); margin: 0 0 18px; }
 .about-links{ display:flex; gap:14px; flex-wrap:wrap; margin-top: 22px; }
 
@@ -218,9 +225,8 @@ a{ color: inherit; text-decoration:none; }
 .work-tile{
   aspect-ratio: 1949/1199; border-radius:12px; overflow:hidden; background: #fff;
 }
-.work-tile img{ width:100%; height:100%; object-fit:contain; transition: transform .3s ease; }
+.work-tile img{ width:100%; height:100%; object-fit:contain; }
 .work-tile-cover img{ object-fit:cover; object-position: left center; }
-.work-tile:hover img{ transform: scale(1.05); }
 /* fewer than 4 images: one big tile spans the whole grid instead of a partial row */
 .work-tile-solo{ grid-column: span 2; grid-row: span 2; aspect-ratio: 1949/1199; }
 .work-tile-empty{
@@ -317,4 +323,5 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
 @media (prefers-reduced-motion: reduce){
   .reveal{ opacity:1; transform:none; transition:none; }
   .hero-copy > *, .hero-art{ animation:none; opacity:1; transform:none; }
+  .about-bunny:hover img, .about-bunny:focus-visible img{ animation:none; }
 }
