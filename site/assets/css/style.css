@@ -156,17 +156,19 @@ a{ color: inherit; text-decoration:none; }
 .about-grid{
   display:grid; grid-template-columns: 300px 1fr; gap: 56px; align-items:start;
 }
-/* set by the portrait's onerror: without a photo the text takes the full width
-   instead of being left in the 300px portrait column */
-.about-grid.no-portrait{ grid-template-columns: 1fr; }
-.about-grid.no-portrait .about-portrait{ display:none; }
-/* keep the measure close to what the two-column layout gives */
-.about-grid.no-portrait .about-body p{ max-width: 70ch; }
 .about-portrait{
   border-radius: var(--radius); overflow:hidden; aspect-ratio: 4/5; background: var(--bg-deep);
   border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink);
+  position: relative; display:flex; align-items:center; justify-content:center;
 }
-.about-portrait img{ width:100%; height:100%; object-fit:cover; }
+.about-portrait .portrait-photo{ width:100%; height:100%; object-fit:cover; }
+/* set by the portrait photo's onerror: stands in for the real photo until
+   one is added at assets/images/about/portrait.jpg */
+.about-bunny{ display:none; }
+.about-grid.no-portrait .portrait-photo{ display:none; }
+.about-grid.no-portrait .about-bunny{ display:block; width:62%; }
+.about-bunny img{ width:100%; transition: transform .2s ease; }
+.about-bunny:hover img, .about-bunny:focus-visible img{ transform: scale(1.05); }
 .about-body p{ font-size:1.05rem; color: var(--ink-soft); margin: 0 0 18px; }
 .about-links{ display:flex; gap:14px; flex-wrap:wrap; margin-top: 22px; }
 
