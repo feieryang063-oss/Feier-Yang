@@ -69,40 +69,14 @@ document.addEventListener('DOMContentLoaded', function () {
   if (revealEls.length && !reduceMotion && 'IntersectionObserver' in window) {
     revealEls.forEach(function (el) { el.classList.add('reveal'); });
     var io = new IntersectionObserver(function (entries) {
-      var justVisible = entries.filter(function (e) { return e.isIntersecting; });
-      justVisible.forEach(function (entry, i) {
-        var isWorkItem = entry.target.classList.contains('work-item');
-        var delay = isWorkItem ? i * 120 : 0;
-        setTimeout(function () {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
           entry.target.classList.add('is-visible');
-        }, delay);
-        io.unobserve(entry.target);
+          io.unobserve(entry.target);
+        }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     revealEls.forEach(function (el) { io.observe(el); });
-  }
-
-  /* ---------- Hero desk scene: fades and lifts with scroll ---------- */
-  var deskLayer = document.querySelector('.hero-art-desk');
-  var paperLayer = document.querySelector('.hero-art-paper');
-  var bunnyLayer = document.querySelector('.hero-art-bunny');
-  if (deskLayer && paperLayer && bunnyLayer && !reduceMotion) {
-    var heroTicking = false;
-    var DESK_FADE_DIST = 480;
-    var PAPER_FADE_DIST = 320;
-    var BUNNY_LIFT_DIST = 480;
-    var BUNNY_LIFT_PX = 26;
-    window.addEventListener('scroll', function () {
-      if (heroTicking) return;
-      heroTicking = true;
-      requestAnimationFrame(function () {
-        var y = window.scrollY;
-        deskLayer.style.opacity = 1 - Math.min(1, y / DESK_FADE_DIST);
-        paperLayer.style.opacity = 1 - Math.min(1, y / PAPER_FADE_DIST);
-        bunnyLayer.style.transform = 'translateY(-' + (BUNNY_LIFT_PX * Math.min(1, y / BUNNY_LIFT_DIST)).toFixed(1) + 'px)';
-        heroTicking = false;
-      });
-    }, { passive: true });
   }
 
   /* ---------- Filters ---------- */
