@@ -123,6 +123,7 @@ a{ color: inherit; text-decoration:none; }
 }
 .hero h1 .accent{
   display: block;
+  font-style: normal;
   color: var(--salmon);
 }
 .hero p{
@@ -188,7 +189,7 @@ a{ color: inherit; text-decoration:none; }
 /* ---------- Project list: flat tiled spreads ---------- */
 .grid{ display:flex; flex-direction:column; gap:56px; }
 .work-item{
-  display:grid; grid-template-columns: 300px 1fr; gap:48px; align-items:start;
+  display:grid; grid-template-columns: 300px minmax(0, 820px); gap:48px; align-items:start;
   padding-bottom:56px; border-bottom:1.5px solid var(--line);
 }
 .work-item:last-child{ border-bottom:none; padding-bottom:0; }
