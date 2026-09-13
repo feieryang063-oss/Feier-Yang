@@ -163,9 +163,13 @@ a{ color: inherit; text-decoration:none; }
 }
 .about-portrait .portrait-photo{ width:100%; height:100%; object-fit:cover; }
 /* set by the portrait photo's onerror: stands in for the real photo until
-   one is added at assets/images/about/portrait.jpg */
+   one is added at assets/images/about/portrait.jpg — unframed, unlike the
+   photo box, since it's a floating mascot rather than a framed portrait */
 .about-bunny{ display:none; }
 .about-grid.no-portrait .portrait-photo{ display:none; }
+.about-grid.no-portrait .about-portrait{
+  border:none; box-shadow:none; background:none; aspect-ratio:auto;
+}
 .about-grid.no-portrait .about-bunny{ display:block; width:62%; }
 .about-bunny img{ width:100%; transition: transform .2s ease; }
 .about-bunny:hover img, .about-bunny:focus-visible img{ transform: scale(1.05); }
