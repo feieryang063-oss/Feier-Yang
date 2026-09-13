@@ -189,7 +189,7 @@ a{ color: inherit; text-decoration:none; }
 /* ---------- Project list: flat tiled spreads ---------- */
 .grid{ display:flex; flex-direction:column; gap:56px; }
 .work-item{
-  display:grid; grid-template-columns: 300px minmax(0, 820px); gap:48px; align-items:start;
+  display:grid; grid-template-columns: 300px 1fr; gap:48px; align-items:start;
   padding-bottom:56px; border-bottom:1.5px solid var(--line);
 }
 .work-item:last-child{ border-bottom:none; padding-bottom:0; }
@@ -204,17 +204,17 @@ a{ color: inherit; text-decoration:none; }
   color: var(--salmon-deep); align-self:flex-start;
 }
 .work-more:hover{ text-decoration: underline; }
-.work-tiles{ display:grid; grid-template-columns: repeat(2, 1fr); gap:14px; }
+.work-tiles{ display:grid; grid-template-columns: repeat(2, 1fr); gap:14px; max-width:820px; margin-left:auto; }
 .work-tile{
-  aspect-ratio: 4/3; border-radius:12px; overflow:hidden; background: var(--bg-deep);
+  aspect-ratio: 1949/1199; border-radius:12px; overflow:hidden; background: var(--bg-deep);
 }
 .work-tile img{ width:100%; height:100%; object-fit:contain; transition: transform .3s ease; }
 .work-tile:hover img{ transform: scale(1.05); }
 /* fewer than 4 images: one big tile spans the whole grid instead of a partial row */
-.work-tile-solo{ grid-column: span 2; grid-row: span 2; aspect-ratio: 4/3; }
+.work-tile-solo{ grid-column: span 2; grid-row: span 2; aspect-ratio: 1949/1199; }
 .work-tile-empty{
   grid-column: span 2; grid-row: span 2; display:flex; align-items:center; justify-content:center;
-  aspect-ratio: 4/3;
+  aspect-ratio: 1949/1199;
   background: repeating-linear-gradient(135deg, var(--bg-deep), var(--bg-deep) 14px, #f1f9fa 14px, #f1f9fa 28px);
 }
 .work-tile-empty .mono{ font-family: var(--display-black); font-size:2rem; color: var(--ink); opacity:.18; }
