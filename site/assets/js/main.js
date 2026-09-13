@@ -62,36 +62,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }, { passive: true });
   }
 
-  /* ---------- Cards: 3D tilt ---------- */
-  var tiltMax = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tilt-max')) || 4.6;
-  document.querySelectorAll('.tilt-frame').forEach(function (frame) {
-    var media = frame.querySelector('.card-media');
-    frame.addEventListener('mousemove', function (e) {
-      var rect = frame.getBoundingClientRect();
-      var px = (e.clientX - rect.left) / rect.width - 0.5;
-      var py = (e.clientY - rect.top) / rect.height - 0.5;
-      var rx = (-py * tiltMax).toFixed(2);
-      var ry = (px * tiltMax).toFixed(2);
-      media.style.transform = 'rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) scale(1.015)';
-    });
-    frame.addEventListener('mouseleave', function () {
-      media.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
-    });
-  });
-
   /* ---------- Scroll-in reveal ---------- */
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var revealSelectors = '.section-head, .card, .about-grid, .project-section, .project-cover, .project-links, .project-video';
+  var revealSelectors = '.section-head, .work-item, .about-grid, .project-section, .project-cover, .project-links, .project-video';
   var revealEls = document.querySelectorAll(revealSelectors);
   if (revealEls.length && !reduceMotion && 'IntersectionObserver' in window) {
-    var cardIndex = 0;
-    revealEls.forEach(function (el) {
-      el.classList.add('reveal');
-      if (el.classList.contains('card')) {
-        el.style.transitionDelay = ((cardIndex % 3) * 0.08).toFixed(2) + 's';
-        cardIndex++;
-      }
-    });
+    revealEls.forEach(function (el) { el.classList.add('reveal'); });
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
