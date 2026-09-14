@@ -15,6 +15,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: One-time cleanup of orphaned folders (removed projects)
+        continue-on-error: true
+        run: |
+          cleanup() {
+            local dir="$1"; shift
+            local quotes=()
+            for f in "$@"; do quotes+=(--quote "DELE $dir/$f"); done
+            quotes+=(--quote "RMD $dir")
+            curl -s -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+              "ftp://${{ secrets.FTP_SERVER }}/" "${quotes[@]}" -o /dev/null || true
+          }
+          cleanup /assets/images/roy roy-1.jpg roy-2.jpg roy-3.jpg roy-4.jpg roy-5.jpg
+          cleanup /assets/images/meow-mouse meow-mouse-1.jpeg meow-mouse-2.jpg meow-mouse-3.jpg meow-mouse-4.jpg meow-mouse-5.jpg meow-mouse-6.jpg
+          cleanup /assets/images/7am-enfant 7am-enfant-1.png 7am-enfant-2.png 7am-enfant-3.png 7am-enfant-4.png 7am-enfant-5.png
+
       - name: Upload site/ to Hostinger over FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
