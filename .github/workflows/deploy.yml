@@ -24,8 +24,12 @@ jobs:
           # still remembers them from the last successful sync and the action's
           # folder-delete routine errors out instead of skipping a folder that's
           # already gone. Force a fresh resync from a live server listing.
-          curl -v -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-            "ftp://${{ secrets.FTP_SERVER }}/" --quote "DELE .ftp-deploy-sync-state.json" \
+          # target a path that doesn't exist so curl's post-quote default
+          # operation 550s on CWD immediately instead of opening a passive
+          # data connection for a directory listing (which hung last time)
+          curl -v --max-time 30 -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+            "ftp://${{ secrets.FTP_SERVER }}/__cleanup_noop__/" \
+            --quote "DELE .ftp-deploy-sync-state.json" \
             > /tmp/curlout.txt 2>&1
           echo "curl exit code: $?"
           grep -E "^> |^< " /tmp/curlout.txt
