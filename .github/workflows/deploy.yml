@@ -15,24 +15,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: One-time cleanup of orphaned folders (removed projects)
+      - name: One-time reset of stale FTP-Deploy-Action sync state
         continue-on-error: true
         run: |
           set +e
-          cleanup() {
-            local dir="$1"; shift
-            local quotes=()
-            for f in "$@"; do quotes+=(--quote "DELE $dir/$f"); done
-            quotes+=(--quote "RMD $dir")
-            echo "--- cleaning $dir ---"
-            curl -v -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-              "ftp://${{ secrets.FTP_SERVER }}/$dir/" "${quotes[@]}" > /tmp/curlout.txt 2>&1
-            echo "curl exit code: $?"
-            grep -E "^> |^< |^\* Entry" /tmp/curlout.txt
-          }
-          cleanup assets/images/roy roy-1.jpg roy-2.jpg roy-3.jpg roy-4.jpg roy-5.jpg
-          cleanup assets/images/meow-mouse meow-mouse-1.jpeg meow-mouse-2.jpg meow-mouse-3.jpg meow-mouse-4.jpg meow-mouse-5.jpg meow-mouse-6.jpg
-          cleanup assets/images/7am-enfant 7am-enfant-1.png 7am-enfant-2.png 7am-enfant-3.png 7am-enfant-4.png 7am-enfant-5.png
+          # The orphaned roy/meow-mouse/7am-enfant folders are already deleted
+          # from the server (confirmed manually), but ftp-deploy-sync-state.json
+          # still remembers them from the last successful sync and the action's
+          # folder-delete routine errors out instead of skipping a folder that's
+          # already gone. Force a fresh resync from a live server listing.
+          curl -v -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+            "ftp://${{ secrets.FTP_SERVER }}/" --quote "DELE .ftp-deploy-sync-state.json" \
+            > /tmp/curlout.txt 2>&1
+          echo "curl exit code: $?"
+          grep -E "^> |^< " /tmp/curlout.txt
           exit 0
 
       - name: Upload site/ to Hostinger over FTP
