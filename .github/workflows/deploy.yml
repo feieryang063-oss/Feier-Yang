@@ -15,26 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: One-time reset of stale FTP-Deploy-Action sync state
-        continue-on-error: true
-        run: |
-          set +e
-          # The orphaned roy/meow-mouse/7am-enfant folders are already deleted
-          # from the server (confirmed manually), but ftp-deploy-sync-state.json
-          # still remembers them from the last successful sync and the action's
-          # folder-delete routine errors out instead of skipping a folder that's
-          # already gone. Force a fresh resync from a live server listing.
-          # target a path that doesn't exist so curl's post-quote default
-          # operation 550s on CWD immediately instead of opening a passive
-          # data connection for a directory listing (which hung last time)
-          curl -v --max-time 30 -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-            "ftp://${{ secrets.FTP_SERVER }}/__cleanup_noop__/" \
-            --quote "DELE .ftp-deploy-sync-state.json" \
-            > /tmp/curlout.txt 2>&1
-          echo "curl exit code: $?"
-          grep -E "^> |^< " /tmp/curlout.txt
-          exit 0
-
       - name: Upload site/ to Hostinger over FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
