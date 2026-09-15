@@ -1,5 +1,20 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+  /* ---------- Hero ticker: ensure enough content to loop with no gap ---------- */
+  var tickerTrack = document.querySelector('.hero-ticker-track');
+  var tickerUnit = tickerTrack && tickerTrack.querySelector('.hero-ticker-unit');
+  if (tickerTrack && tickerUnit) {
+    var targetWidth = window.innerWidth * 1.5;
+    while (tickerTrack.scrollWidth < targetWidth) {
+      tickerTrack.appendChild(tickerUnit.cloneNode(true));
+    }
+    var tileWidth = tickerTrack.scrollWidth;
+    var clones = Array.prototype.slice.call(tickerTrack.children);
+    clones.forEach(function (node) { tickerTrack.appendChild(node.cloneNode(true)); });
+    var pxPerSecond = 55;
+    tickerTrack.style.animationDuration = (tileWidth / pxPerSecond) + 's';
+  }
+
   /* ---------- Nav mobile toggle ---------- */
   var toggle = document.querySelector('.nav-toggle');
   var links = document.querySelector('.nav-links');
