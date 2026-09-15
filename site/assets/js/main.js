@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     tickerTrack.style.animationDuration = (tileWidth / pxPerSecond) + 's';
   }
 
-  /* ---------- "Work" section heading: letters spread out as it scrolls into view ---------- */
+  /* ---------- "Work" section heading: letters start spread apart and gather together (to the left) as it scrolls into view ---------- */
   var stretchHeading = document.querySelector('.stretch-heading');
   if (stretchHeading) {
     var stretchSection = stretchHeading.closest('.section');
@@ -40,10 +40,12 @@ document.addEventListener('DOMContentLoaded', function () {
       var rect = stretchSection.getBoundingClientRect();
       var progress = (window.innerHeight - rect.top) / (window.innerHeight * 0.7);
       progress = Math.min(1, Math.max(0, progress));
-      stretchHeading.style.letterSpacing = (progress * maxLetterSpacing) + 'px';
+      /* starts fully spread (max letter-spacing) as the section enters from
+         the bottom, then gathers together toward the left as it scrolls up */
+      stretchHeading.style.letterSpacing = ((1 - progress) * maxLetterSpacing) + 'px';
     };
     if (reduceMotionStretch) {
-      requestAnimationFrame(function () { requestAnimationFrame(function () { measureMax(); stretchHeading.style.letterSpacing = maxLetterSpacing + 'px'; }); });
+      requestAnimationFrame(function () { requestAnimationFrame(function () { measureMax(); stretchHeading.style.letterSpacing = '0px'; }); });
     } else {
       requestAnimationFrame(function () { requestAnimationFrame(function () { measureMax(); updateStretchScroll(); }); });
       window.addEventListener('scroll', updateStretchScroll, { passive: true });
