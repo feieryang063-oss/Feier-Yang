@@ -114,7 +114,7 @@ a{ color: inherit; text-decoration:none; }
 }
 .hero-ticker{
   overflow:hidden; margin-top: 56px;
-  border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink);
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
   background: var(--bg-deep);
 }
 .hero-ticker-track{
@@ -122,8 +122,8 @@ a{ color: inherit; text-decoration:none; }
   animation: hero-ticker-scroll 42s linear infinite;
 }
 .hero-ticker-track span{
-  display:inline-block; padding: 16px 0;
-  font-family: var(--mono); font-weight:700; font-size:0.95rem; letter-spacing:.04em;
+  display:inline-block; padding: 13px 0;
+  font-family: var(--mono); font-weight:500; font-size:0.8rem; letter-spacing:.09em;
   text-transform:uppercase; color: var(--ink);
 }
 @keyframes hero-ticker-scroll{
