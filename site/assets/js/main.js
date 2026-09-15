@@ -29,7 +29,10 @@ document.addEventListener('DOMContentLoaded', function () {
       var contentRight = wrapRect.right - wrapPaddingRight;
       var headingLeft = stretchHeading.getBoundingClientRect().left;
       var naturalWidth = stretchHeading.getBoundingClientRect().width;
-      var gaps = stretchHeading.textContent.trim().length;
+      /* letter-spacing adds a trailing gap after the last character too, so
+         the visible right edge of the last glyph only moves by (N-1) gaps,
+         not N — use N-1 so the last letter itself reaches contentRight */
+      var gaps = stretchHeading.textContent.trim().length - 1;
       var extra = (contentRight - headingLeft) - naturalWidth;
       maxLetterSpacing = (extra > 0 && gaps > 0) ? extra / gaps : 0;
     };
@@ -60,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var startRight = workLink.getBoundingClientRect().right;
         var targetLeft = resumeLink.getBoundingClientRect().left;
         var extra = targetLeft - startRight;
-        var gaps = workLink.textContent.trim().length;
+        var gaps = workLink.textContent.trim().length - 1;
         if (extra > 0 && gaps > 0) {
           workLink.style.letterSpacing = (extra / gaps) + 'px';
           aboutLink.style.opacity = '0';
