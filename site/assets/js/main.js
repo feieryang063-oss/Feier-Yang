@@ -82,10 +82,15 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ---------- Scroll minimap progress ---------- */
   var minimap = document.querySelector('.scroll-minimap');
   if (minimap) {
+    var minimapNums = minimap.querySelectorAll('.scroll-minimap-num');
     var updateMinimap = function () {
       var scrollable = document.documentElement.scrollHeight - window.innerHeight;
       var pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
-      minimap.style.setProperty('--progress', Math.min(100, Math.max(0, pct)) + '%');
+      pct = Math.min(100, Math.max(0, pct));
+      var activeIndex = Math.min(minimapNums.length - 1, Math.floor(pct / 100 * minimapNums.length));
+      minimapNums.forEach(function (num, i) {
+        num.classList.toggle('is-active', i === activeIndex);
+      });
     };
     updateMinimap();
     window.addEventListener('scroll', updateMinimap, { passive: true });
