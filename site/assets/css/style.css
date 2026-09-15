@@ -92,7 +92,7 @@ a{ color: inherit; text-decoration:none; }
 
 /* ---------- Bunny mascot, fixed left, sways with scroll, links to About ---------- */
 .bunny-anchor{
-  position:fixed; left:96px; bottom:0; z-index:5; width:150px; cursor:pointer;
+  position:absolute; left:96px; z-index:5; width:150px; cursor:pointer;
   transform-origin: 50% 100%; will-change: transform;
 }
 .bunny-anchor img{ width:100%; transition: transform .2s ease; }
@@ -287,7 +287,7 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
 .project-back:hover{ color: var(--salmon-deep); }
 /* the hero grid mirrors .work-item exactly (same columns, same gap) so the
    page opens looking identical to its homepage card, just at full size */
-.project-hero-grid{ display:grid; grid-template-columns: 300px 1fr; gap:48px; align-items:start; margin-bottom: 50px; }
+.project-hero-grid{ display:grid; grid-template-columns: 300px 1fr; gap:48px; align-items:start; }
 .project-hero-text{ display:flex; flex-direction:column; min-width:0; }
 .project-hero h1{ font-family: var(--display-black); font-size: clamp(1.8rem,2.6vw,2.2rem); margin:16px 0 14px; text-transform:uppercase; line-height:1.05; }
 .project-lede{ color: var(--ink-soft); font-size: 0.94rem; }
@@ -301,6 +301,9 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
   /* same width formula as .work-tiles, so the cover renders at the same
      on-screen size here as it did as the homepage card */
   .project-cover{ width: min(100%, calc((100vh - 170px) * 1.6255 + 14px)); }
+  /* keep the video and gallery in the same column as the cover, so
+     everything below the hero shares its left edge and width */
+  .project-video, .project-gallery{ grid-column: 2; width: min(100%, calc((100vh - 170px) * 1.6255 + 14px)); }
 }
 @media (max-width: 860px){
   .project-hero-grid{ grid-template-columns: 1fr; gap:20px; }

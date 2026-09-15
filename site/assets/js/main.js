@@ -124,9 +124,18 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   if (eyes.length) scheduleBlink();
 
-  /* ---------- Bunny: sway with scroll, like wind ---------- */
+  /* ---------- Bunny: anchor to the bottom of the hero so it scrolls away with the page instead of staying fixed over the text ---------- */
   var bunny = document.querySelector('.bunny-anchor');
   if (bunny) {
+    var bunnyHero = document.querySelector('.project-hero-text');
+    if (bunnyHero) {
+      var placeBunny = function () {
+        var rect = bunnyHero.getBoundingClientRect();
+        bunny.style.top = Math.round(rect.bottom + window.scrollY + 20) + 'px';
+      };
+      placeBunny();
+      window.addEventListener('resize', placeBunny);
+    }
     var ticking = false;
     window.addEventListener('scroll', function () {
       if (ticking) return;
