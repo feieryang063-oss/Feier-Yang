@@ -6,6 +6,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Caveat:wght@600;700&display=swap');
 
 :root{
+  --gutter: 32px;
   --bg: #e7f2f4;
   --bg-deep: #d8ebee;
   --ink: #14181c;
@@ -46,6 +47,7 @@ a{ color: inherit; text-decoration:none; }
 }
 @media (min-width: 981px){
   .wrap{ padding: 0 96px; }
+  :root{ --gutter: 96px; }
 }
 
 /* ---------- Nav + mascot eyes ---------- */
@@ -92,7 +94,7 @@ a{ color: inherit; text-decoration:none; }
 
 /* ---------- Bunny mascot, fixed left, sways with scroll, links to About ---------- */
 .bunny-anchor{
-  position:absolute; left:96px; z-index:5; width:150px; cursor:pointer;
+  position:fixed; left: var(--gutter); bottom: 1in; z-index:5; width:150px; cursor:pointer;
   transform-origin: 50% 100%; will-change: transform;
 }
 .bunny-anchor img{ width:100%; transition: transform .2s ease; }
@@ -291,23 +293,26 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
 .project-hero-text{ display:flex; flex-direction:column; min-width:0; }
 .project-hero h1{ font-family: var(--display-black); font-size: clamp(1.8rem,2.6vw,2.2rem); margin:16px 0 14px; text-transform:uppercase; line-height:1.05; }
 .project-lede{ color: var(--ink-soft); font-size: 0.94rem; }
-.project-meta-row{
-  display:flex; flex-direction:column; gap: 14px; padding: 20px 0 0; margin: 20px 0 0; border-top:1.5px solid var(--line);
-}
-.project-meta-row .meta-item{ font-size:0.88rem; }
-.project-meta-row .meta-item span{ display:block; color: var(--ink-soft); font-family: var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px; }
 .project-cover{ border-radius: var(--radius); overflow:hidden; background:#fff; aspect-ratio: 1949/1199; }
 @media (min-width: 861px){
   /* same width formula as .work-tiles, so the cover renders at the same
      on-screen size here as it did as the homepage card */
-  .project-cover{ width: min(100%, calc((100vh - 170px) * 1.6255 + 14px)); }
-  /* keep the video and gallery in the same column as the cover, so
-     everything below the hero shares its left edge and width */
-  .project-video, .project-gallery{ grid-column: 2; width: min(100%, calc((100vh - 170px) * 1.6255 + 14px)); }
+  .project-cover, .project-video, .project-gallery{ width: min(100%, calc((100vh - 170px) * 1.6255 + 14px)); }
+  /* keep the cover, video and gallery in the same column, so everything
+     below the hero shares its left edge and width */
+  .project-cover, .project-video, .project-gallery{ grid-column: 2; }
+  /* the back link/tags/title/description stay put on screen instead of
+     scrolling away, like the homepage card's own text never moves */
+  .project-hero-text{
+    position: fixed; top: 104px; left: var(--gutter); width: 300px;
+    max-height: calc(100vh - 128px); overflow-y: auto;
+  }
+  /* everything after the hero shifts right to clear the fixed sidebar
+     and line up with the cover/gallery above it */
+  .project-section, .project-links, .project-nav{ margin-left: calc(300px + 48px); }
 }
 @media (max-width: 860px){
   .project-hero-grid{ grid-template-columns: 1fr; gap:20px; }
-  .project-meta-row{ flex-direction:row; flex-wrap:wrap; gap:24px; }
 }
 .project-cover img{ width:100%; height:100%; object-fit:cover; }
 .project-cover-left img{ object-position: left center; }
