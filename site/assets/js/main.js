@@ -15,11 +15,14 @@ document.addEventListener('DOMContentLoaded', function () {
     tickerTrack.style.animationDuration = (tileWidth / pxPerSecond) + 's';
   }
 
-  /* ---------- "Work" section heading: letters stretch to the container's right edge ---------- */
+  /* ---------- "Work" section heading: letters spread out as it scrolls into view ---------- */
   var stretchHeading = document.querySelector('.stretch-heading');
   if (stretchHeading) {
+    var stretchSection = stretchHeading.closest('.section');
     var stretchWrap = stretchHeading.closest('.wrap');
-    var applyStretch = function () {
+    var reduceMotionStretch = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var maxLetterSpacing = 0;
+    var measureMax = function () {
       stretchHeading.style.letterSpacing = '';
       var wrapRect = stretchWrap.getBoundingClientRect();
       var wrapPaddingRight = parseFloat(getComputedStyle(stretchWrap).paddingRight) || 0;
@@ -28,12 +31,21 @@ document.addEventListener('DOMContentLoaded', function () {
       var naturalWidth = stretchHeading.getBoundingClientRect().width;
       var gaps = stretchHeading.textContent.trim().length;
       var extra = (contentRight - headingLeft) - naturalWidth;
-      if (extra > 0 && gaps > 0) {
-        stretchHeading.style.letterSpacing = (extra / gaps) + 'px';
-      }
+      maxLetterSpacing = (extra > 0 && gaps > 0) ? extra / gaps : 0;
     };
-    requestAnimationFrame(function () { requestAnimationFrame(applyStretch); });
-    window.addEventListener('resize', applyStretch);
+    var updateStretchScroll = function () {
+      var rect = stretchSection.getBoundingClientRect();
+      var progress = (window.innerHeight - rect.top) / (window.innerHeight * 0.7);
+      progress = Math.min(1, Math.max(0, progress));
+      stretchHeading.style.letterSpacing = (progress * maxLetterSpacing) + 'px';
+    };
+    if (reduceMotionStretch) {
+      requestAnimationFrame(function () { requestAnimationFrame(function () { measureMax(); stretchHeading.style.letterSpacing = maxLetterSpacing + 'px'; }); });
+    } else {
+      requestAnimationFrame(function () { requestAnimationFrame(function () { measureMax(); updateStretchScroll(); }); });
+      window.addEventListener('scroll', updateStretchScroll, { passive: true });
+      window.addEventListener('resize', function () { measureMax(); updateStretchScroll(); });
+    }
   }
 
   /* ---------- Nav: WORK spreads its letters out to meet RESUME on hover ---------- */
