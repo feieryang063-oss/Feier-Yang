@@ -297,6 +297,12 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
   border-radius: var(--radius); overflow:hidden; margin-bottom: 50px; background: var(--bg-deep);
   border:2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); aspect-ratio: 1949/1199;
 }
+@media (min-width: 861px){
+  /* same width formula as .work-tiles (minus the 300px text column + 48px
+     gap it shares space with there), so the cover renders at the same
+     on-screen size here as it did as the homepage card */
+  .project-cover{ width: min(calc(100% - 348px), calc((100vh - 170px) * 1.6255 + 14px)); }
+}
 .project-cover img{ width:100%; height:100%; object-fit:cover; }
 .project-cover-left img{ object-position: left center; }
 .project-cover-top img{ object-position: center top; }
