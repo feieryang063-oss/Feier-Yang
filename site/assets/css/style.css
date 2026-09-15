@@ -239,7 +239,14 @@ a{ color: inherit; text-decoration:none; }
   color: var(--salmon-deep); align-self:flex-start;
 }
 .work-more:hover{ text-decoration: underline; }
-.work-tiles{ display:grid; grid-template-columns: repeat(2, 1fr); gap:14px; margin-left:auto; width:100%; }
+.work-tiles{
+  display:grid; grid-template-columns: repeat(2, 1fr); gap:14px; margin-left:auto; width:100%;
+  cursor: url('../images/deco/eyes-cursor.svg') 29 13, pointer;
+  transition: transform .3s cubic-bezier(.2,.7,.3,1);
+}
+.work-tiles.is-jumping{ transform: scale(1.03); }
+body.is-navigating{ animation: page-jump-out .38s ease forwards; }
+@keyframes page-jump-out{ to{ opacity:0; transform: scale(.97); } }
 @media (min-width: 861px){
   /* scale the tile grid with viewport height (bigger screens = bigger images)
      while keeping each project's full spread within one screen: solving

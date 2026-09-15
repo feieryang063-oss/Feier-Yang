@@ -175,6 +175,20 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('resize', updateMinimap);
   }
 
+  /* ---------- Work tiles: click the hero image itself to jump into the project ---------- */
+  document.querySelectorAll('.work-tiles').forEach(function (tiles) {
+    var workItem = tiles.closest('.work-item');
+    var link = workItem && workItem.querySelector('.work-more');
+    if (!link) return;
+    tiles.addEventListener('click', function () {
+      if (document.body.classList.contains('is-navigating')) return;
+      if (reduceMotion) { window.location.href = link.href; return; }
+      document.body.classList.add('is-navigating');
+      tiles.classList.add('is-jumping');
+      setTimeout(function () { window.location.href = link.href; }, 360);
+    });
+  });
+
   /* ---------- Filters ---------- */
   var filterBtns = document.querySelectorAll('.filter-btn');
   var cards = document.querySelectorAll('[data-category]');
