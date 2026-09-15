@@ -15,6 +15,52 @@ document.addEventListener('DOMContentLoaded', function () {
     tickerTrack.style.animationDuration = (tileWidth / pxPerSecond) + 's';
   }
 
+  /* ---------- "Work" section heading: letters stretch to the container's right edge ---------- */
+  var stretchHeading = document.querySelector('.stretch-heading');
+  if (stretchHeading) {
+    var stretchWrap = stretchHeading.closest('.wrap');
+    var applyStretch = function () {
+      stretchHeading.style.letterSpacing = '';
+      var wrapRect = stretchWrap.getBoundingClientRect();
+      var wrapPaddingRight = parseFloat(getComputedStyle(stretchWrap).paddingRight) || 0;
+      var contentRight = wrapRect.right - wrapPaddingRight;
+      var headingLeft = stretchHeading.getBoundingClientRect().left;
+      var naturalWidth = stretchHeading.getBoundingClientRect().width;
+      var gaps = stretchHeading.textContent.trim().length;
+      var extra = (contentRight - headingLeft) - naturalWidth;
+      if (extra > 0 && gaps > 0) {
+        stretchHeading.style.letterSpacing = (extra / gaps) + 'px';
+      }
+    };
+    requestAnimationFrame(function () { requestAnimationFrame(applyStretch); });
+    window.addEventListener('resize', applyStretch);
+  }
+
+  /* ---------- Nav: WORK spreads its letters out to meet RESUME on hover ---------- */
+  var navLinksEls = document.querySelectorAll('.nav-links a');
+  if (navLinksEls.length >= 3) {
+    var workLink = navLinksEls[0];
+    var aboutLink = navLinksEls[1];
+    var resumeLink = navLinksEls[navLinksEls.length - 1];
+    var reduceMotionNav = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduceMotionNav) {
+      workLink.addEventListener('mouseenter', function () {
+        var startRight = workLink.getBoundingClientRect().right;
+        var targetLeft = resumeLink.getBoundingClientRect().left;
+        var extra = targetLeft - startRight;
+        var gaps = workLink.textContent.trim().length;
+        if (extra > 0 && gaps > 0) {
+          workLink.style.letterSpacing = (extra / gaps) + 'px';
+          aboutLink.style.opacity = '0';
+        }
+      });
+      workLink.addEventListener('mouseleave', function () {
+        workLink.style.letterSpacing = '';
+        aboutLink.style.opacity = '';
+      });
+    }
+  }
+
   /* ---------- Nav mobile toggle ---------- */
   var toggle = document.querySelector('.nav-toggle');
   var links = document.querySelector('.nav-links');
