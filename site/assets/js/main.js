@@ -79,6 +79,19 @@ document.addEventListener('DOMContentLoaded', function () {
     revealEls.forEach(function (el) { io.observe(el); });
   }
 
+  /* ---------- Scroll minimap progress ---------- */
+  var minimap = document.querySelector('.scroll-minimap');
+  if (minimap) {
+    var updateMinimap = function () {
+      var scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+      minimap.style.setProperty('--progress', Math.min(100, Math.max(0, pct)) + '%');
+    };
+    updateMinimap();
+    window.addEventListener('scroll', updateMinimap, { passive: true });
+    window.addEventListener('resize', updateMinimap);
+  }
+
   /* ---------- Filters ---------- */
   var filterBtns = document.querySelectorAll('.filter-btn');
   var cards = document.querySelectorAll('[data-category]');
