@@ -285,28 +285,30 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
   margin-bottom: 28px;
 }
 .project-back:hover{ color: var(--salmon-deep); }
-.project-hero h1{ font-family: var(--display-black); font-size: clamp(2.4rem,5.5vw,3.8rem); margin:16px 0 20px; text-transform:uppercase; line-height:1.02; }
-.project-lede{ max-width: 64ch; color: var(--ink-soft); font-size: 1.05rem; }
+/* the hero grid mirrors .work-item exactly (same columns, same gap) so the
+   page opens looking identical to its homepage card, just at full size */
+.project-hero-grid{ display:grid; grid-template-columns: 300px 1fr; gap:48px; align-items:start; margin-bottom: 50px; }
+.project-hero-text{ display:flex; flex-direction:column; min-width:0; }
+.project-hero h1{ font-family: var(--display-black); font-size: clamp(1.8rem,2.6vw,2.2rem); margin:16px 0 14px; text-transform:uppercase; line-height:1.05; }
+.project-lede{ color: var(--ink-soft); font-size: 0.94rem; }
 .project-meta-row{
-  display:flex; flex-wrap:wrap; gap: 30px; padding: 24px 0; border-top:2px solid var(--ink); border-bottom:2px solid var(--ink);
-  margin: 28px 0 44px;
+  display:flex; flex-direction:column; gap: 14px; padding: 20px 0 0; margin: 20px 0 0; border-top:1.5px solid var(--line);
 }
 .project-meta-row .meta-item{ font-size:0.88rem; }
 .project-meta-row .meta-item span{ display:block; color: var(--ink-soft); font-family: var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px; }
-.project-cover{
-  border-radius: var(--radius); overflow:hidden; margin-bottom: 50px; background: var(--bg-deep);
-  border:2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); aspect-ratio: 1949/1199;
-}
+.project-cover{ border-radius: var(--radius); overflow:hidden; background:#fff; aspect-ratio: 1949/1199; }
 @media (min-width: 861px){
-  /* same width formula as .work-tiles (minus the 300px text column + 48px
-     gap it shares space with there), so the cover renders at the same
+  /* same width formula as .work-tiles, so the cover renders at the same
      on-screen size here as it did as the homepage card */
-  .project-cover{ width: min(calc(100% - 348px), calc((100vh - 170px) * 1.6255 + 14px)); }
+  .project-cover{ width: min(100%, calc((100vh - 170px) * 1.6255 + 14px)); }
+}
+@media (max-width: 860px){
+  .project-hero-grid{ grid-template-columns: 1fr; gap:20px; }
+  .project-meta-row{ flex-direction:row; flex-wrap:wrap; gap:24px; }
 }
 .project-cover img{ width:100%; height:100%; object-fit:cover; }
 .project-cover-left img{ object-position: left center; }
 .project-cover-top img{ object-position: center top; }
-.project-cover-contain{ background:#fff; }
 .project-cover-contain img{ object-fit:contain; }
 .project-body{ display:grid; grid-template-columns: minmax(0,1fr); gap: 56px; }
 .project-section{ display:grid; grid-template-columns: 260px 1fr; gap: 40px; padding-bottom: 8px; }
