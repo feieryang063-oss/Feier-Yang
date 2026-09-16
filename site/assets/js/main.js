@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  /* ---------- Nav: WORK spreads its letters out to meet RESUME on hover ---------- */
+  /* ---------- Nav: WORK/ABOUT spread their own letters out to meet RESUME on hover, fading the other ---------- */
   var navLinksEls = document.querySelectorAll('.nav-links a');
   if (navLinksEls.length >= 3) {
     var workLink = navLinksEls[0];
@@ -61,20 +61,24 @@ document.addEventListener('DOMContentLoaded', function () {
     var resumeLink = navLinksEls[navLinksEls.length - 1];
     var reduceMotionNav = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!reduceMotionNav) {
-      workLink.addEventListener('mouseenter', function () {
-        var startRight = workLink.getBoundingClientRect().right;
-        var targetLeft = resumeLink.getBoundingClientRect().left;
-        var extra = targetLeft - startRight;
-        var gaps = workLink.textContent.trim().length - 1;
-        if (extra > 0 && gaps > 0) {
-          workLink.style.letterSpacing = (extra / gaps) + 'px';
-          aboutLink.style.opacity = '0';
-        }
-      });
-      workLink.addEventListener('mouseleave', function () {
-        workLink.style.letterSpacing = '';
-        aboutLink.style.opacity = '';
-      });
+      var spreadOnHover = function (link, fadeLink) {
+        link.addEventListener('mouseenter', function () {
+          var startRight = link.getBoundingClientRect().right;
+          var targetLeft = resumeLink.getBoundingClientRect().left;
+          var extra = targetLeft - startRight;
+          var gaps = link.textContent.trim().length - 1;
+          if (extra > 0 && gaps > 0) {
+            link.style.letterSpacing = (extra / gaps) + 'px';
+            fadeLink.style.opacity = '0';
+          }
+        });
+        link.addEventListener('mouseleave', function () {
+          link.style.letterSpacing = '';
+          fadeLink.style.opacity = '';
+        });
+      };
+      spreadOnHover(workLink, aboutLink);
+      spreadOnHover(aboutLink, workLink);
     }
   }
 

@@ -88,9 +88,17 @@ a{ color: inherit; text-decoration:none; }
   color: var(--ink); transition: color .15s ease;
 }
 .nav-links a:hover{ color: var(--salmon-deep); }
-.nav-links a:first-child{ transition: color .15s ease, letter-spacing .45s cubic-bezier(.2,.7,.3,1); }
-.nav-links a:nth-child(2){ transition: color .15s ease, opacity .3s ease; }
+.nav-links a:first-child, .nav-links a:nth-child(2){
+  transition: color .15s ease, letter-spacing .45s cubic-bezier(.2,.7,.3,1), opacity .3s ease;
+}
 .nav-toggle{ display:none; background:none; border:none; cursor:pointer; }
+/* Resume button's arrow nudges up-right and wiggles on hover */
+.btn-arrow{ display:inline-block; transition: transform .3s cubic-bezier(.2,.7,.3,1); }
+.btn:hover .btn-arrow{ transform: translate(3px,-3px) rotate(8deg); animation: btn-arrow-wiggle .5s ease .3s; }
+@keyframes btn-arrow-wiggle{
+  0%,100%{ transform: translate(3px,-3px) rotate(8deg); }
+  50%{ transform: translate(3px,-3px) rotate(-4deg); }
+}
 
 /* ---------- Bunny mascot, fixed left, sways with scroll, links to About ---------- */
 .bunny-anchor{
@@ -332,7 +340,7 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
    size, and gets scaled down as a whole via CSS transform so the
    entire phone screen shows, just smaller, never cropped. */
 .project-prototype{
-  border-radius: var(--radius); overflow:hidden; margin: 0 auto 50px; background:#F7EFE9;
+  border-radius: var(--radius); overflow:hidden; margin: 0 auto 50px; background:transparent;
   position: relative; width: 100%; max-width: 320px; aspect-ratio: 434/1000;
 }
 .project-prototype iframe{
@@ -342,10 +350,35 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
 @media (min-width: 861px){
   .project-prototype{ grid-column: 2; }
 }
+/* small animated nudge above the prototype, pointing viewers to interact with it */
+.proto-cta{
+  display:flex; align-items:center; justify-content:center; gap:8px; margin: 0 auto 16px; max-width:320px;
+  font-family: var(--mono); font-size:0.82rem; font-weight:600; letter-spacing:.03em; color: var(--salmon-deep);
+}
+.proto-cta-arrow{ display:inline-block; transform-origin: 15% 15%; animation: proto-cta-wiggle 1.6s ease-in-out infinite; }
+@keyframes proto-cta-wiggle{
+  0%,100%{ transform: rotate(-4deg) translateY(0); }
+  50%{ transform: rotate(6deg) translateY(4px); }
+}
+@media (min-width: 861px){ .proto-cta{ grid-column: 2; } }
+@media (prefers-reduced-motion: reduce){ .proto-cta-arrow{ animation: none; } }
 .project-body{ display:grid; grid-template-columns: minmax(0,1fr); gap: 56px; }
 .project-section{ display:grid; grid-template-columns: 260px 1fr; gap: 40px; padding-bottom: 8px; }
 .project-section h3{ font-family: var(--display-black); font-size:1.15rem; margin:0; text-transform:uppercase; }
 .project-section p{ color: var(--ink-soft); margin:0; }
+/* decorative image sitting behind this section's text, not a separate gallery item */
+.project-section-bg{ position:relative; overflow:hidden; border-radius: var(--radius); padding: 24px; }
+.project-section-bg .section-bg-img{
+  position:absolute; top:0; right:0; height:100%; width:auto; max-width:85%;
+  object-fit:cover; z-index:0; opacity:.4;
+  mask-image: linear-gradient(to right, transparent, #000 45%);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 45%);
+}
+.project-section-bg h3, .project-section-bg p{ position:relative; z-index:1; }
+@media (max-width: 860px){
+  .project-section-bg{ padding: 20px; }
+  .project-section-bg .section-bg-img{ max-width:100%; opacity:.22; }
+}
 /* same grid as .work-tiles: fixed 2 columns, same gap, same tile look */
 .project-gallery{
   display:grid; grid-template-columns: 1fr; gap: 14px; margin: 0 0 50px;
