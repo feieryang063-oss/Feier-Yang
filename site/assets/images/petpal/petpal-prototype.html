@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PetPal — iPhone 17 prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* iPhone 17 — 402 x 874 pt, safe area top 62 / bottom 34 */
+  --w:402px; --h:874px; --safe-top:62px; --safe-bot:34px;
+  --milk:#FBF5F1; --blush:#F3DDD9; --blush-deep:#E8C6C0;
+  --cocoa:#6B3F2A; --cocoa-soft:#9C7460;
+  --amber:#E8912D; --amber-deep:#C97514;
+  --sage:#6E9469; --rose:#CE4F63; --sky:#3E7BC4;
+  --line:rgba(107,63,42,.14);
+  --shadow:0 22px 54px -20px rgba(107,63,42,.45);
+  --display:"Baloo 2",system-ui,sans-serif;
+  --body:"Nunito Sans",system-ui,sans-serif;
+  --dur:.34s;
+}
+@media (prefers-reduced-motion:reduce){:root{--dur:0.01ms}
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;font-family:var(--body);color:var(--cocoa);
+  background:
+    radial-gradient(120% 80% at 12% 0%, #F6E4E0 0%, transparent 58%),
+    radial-gradient(100% 70% at 92% 100%, #FBE8CE 0%, transparent 60%),
+    #F7EFE9;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;padding:30px 16px;
+}
+
+/* ---------- iPhone 17 shell ---------- */
+.device{
+  width:var(--w);height:var(--h);flex:none;
+  background:var(--milk);border-radius:56px;position:relative;overflow:hidden;
+  box-shadow:var(--shadow),0 0 0 11px #2A1B13,0 0 0 13px #55392B;
+  isolation:isolate;
+}
+@media (max-height:960px){ .device{transform:scale(.86);transform-origin:top center;margin-bottom:-118px} }
+@media (max-height:820px){ .device{transform:scale(.74);margin-bottom:-224px} }
+@media (max-width:440px){ .device{transform:scale(.82);transform-origin:top center;margin-bottom:-150px} }
+
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);
+  width:126px;height:37px;background:#15100C;border-radius:20px;z-index:70}
+.home-bar{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);
+  width:140px;height:5px;border-radius:3px;background:rgba(107,63,42,.32);z-index:70;pointer-events:none}
+.statusbar{position:absolute;top:0;left:0;right:0;height:var(--safe-top);z-index:65;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 32px 0;font-size:14px;font-weight:700;pointer-events:none}
+
+/* ---------- screens ---------- */
+.screen{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  padding:calc(var(--safe-top) + 6px) 24px calc(96px + var(--safe-bot));
+  overflow-y:auto;overscroll-behavior:contain;
+  opacity:0;visibility:hidden;transform:translateX(14px);
+  transition:opacity var(--dur) ease,transform var(--dur) cubic-bezier(.22,.9,.3,1),visibility var(--dur);
+}
+.screen.is-on{opacity:1;visibility:visible;transform:none}
+.screen::-webkit-scrollbar{width:0}
+
+/* ---------- type ---------- */
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--cocoa-soft)}
+h1{font-family:var(--display);font-size:30px;font-weight:700;line-height:1.15;letter-spacing:-.01em}
+h2{font-family:var(--display);font-size:20px;font-weight:600;line-height:1.2}
+p{font-size:14px;line-height:1.55;color:var(--cocoa-soft)}
+.num{font-family:var(--display);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* ---------- controls ---------- */
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+:focus-visible{outline:3px solid var(--amber);outline-offset:3px;border-radius:10px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:16px;border-radius:20px;background:var(--amber);color:#fff;
+  font-family:var(--display);font-size:16px;font-weight:600;
+  box-shadow:0 10px 20px -10px var(--amber-deep);
+  transition:transform .16s ease,box-shadow .16s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 16px 26px -12px var(--amber-deep)}
+.btn:active{transform:translateY(0)}
+.btn[disabled]{opacity:.45;pointer-events:none;box-shadow:none}
+.btn--quiet{background:transparent;color:var(--cocoa-soft);box-shadow:none;font-size:14px;padding:12px}
+.btn--quiet:hover{transform:none;color:var(--cocoa)}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:var(--cocoa-soft)}
+.field input{width:100%;padding:14px 16px;border-radius:16px;border:1.5px solid var(--line);
+  background:#fff;font:inherit;font-size:15px;color:var(--cocoa)}
+.field input:focus{outline:none;border-color:var(--amber)}
+
+/* ---------- splash ---------- */
+.splash{align-items:center;justify-content:center;text-align:center;background:var(--blush)}
+.mark{width:132px;display:grid;place-items:center;margin-bottom:14px;
+  animation:bob 3.4s ease-in-out infinite}
+.mark svg{width:100%;height:auto;overflow:visible}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(3deg)}}
+.wordmark{font-family:var(--display);font-size:44px;font-weight:800;letter-spacing:.02em}
+
+/* ---------- glove / bluetooth ---------- */
+.bt-chip{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;
+  padding:7px 13px 7px 10px;border-radius:99px;background:#fff;margin-bottom:12px;
+  font-size:12px;font-weight:700;box-shadow:0 6px 16px -12px rgba(107,63,42,.7)}
+.bt-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--sage)}
+.bt-chip.is-off .dot{background:var(--cocoa-soft);opacity:.5}
+.bt-chip svg{width:13px;height:13px;color:var(--sky)}
+.bt-chip.is-off svg{color:var(--cocoa-soft)}
+.bt-chip.is-warn{color:var(--rose)}
+.bt-chip.is-warn .dot{background:var(--rose)}
+.bt-chip.is-warn svg{color:var(--rose)}
+
+.banner{display:none;width:100%;gap:11px;align-items:flex-start;text-align:left;
+  background:#fff;border-radius:18px;padding:13px 15px;margin-bottom:12px;
+  box-shadow:inset 0 0 0 1.5px rgba(206,79,99,.34)}
+.banner.is-on{display:flex}
+.banner svg{width:17px;height:17px;color:var(--rose);flex:none;margin-top:2px}
+.banner b{display:block;font-family:var(--display);font-size:13.5px;font-weight:600;line-height:1.3}
+.banner small{font-size:11.5px;color:var(--cocoa-soft);line-height:1.4;display:block;margin-top:1px}
+
+.demo{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--cocoa-soft)}
+.demo button{padding:8px 14px;border-radius:99px;background:#fff;font-size:12px;font-weight:700;
+  color:var(--cocoa-soft);box-shadow:inset 0 0 0 1.5px var(--line);transition:all .15s ease}
+.demo button.is-on{background:var(--cocoa);color:#fff;box-shadow:none}
+
+.connect{align-items:center;text-align:center;justify-content:center;background:var(--blush)}
+.radar{position:relative;width:174px;height:174px;display:grid;place-items:center;margin-bottom:8px;flex:none}
+.radar span{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(62,123,196,.4);
+  opacity:0;animation:ping 2.4s ease-out infinite}
+.radar span:nth-child(2){animation-delay:.8s}
+.radar span:nth-child(3){animation-delay:1.6s}
+.is-linked .radar span{animation:none;opacity:0}
+@keyframes ping{0%{transform:scale(.34);opacity:.85}80%{opacity:0}100%{transform:scale(1);opacity:0}}
+.radar-core{width:88px;height:88px;border-radius:50%;background:#fff;display:grid;place-items:center;
+  box-shadow:0 12px 28px -14px rgba(62,123,196,.7);z-index:2;transition:background .3s ease}
+.radar-core svg{width:38px;height:38px;color:var(--sky)}
+.is-linked .radar-core{background:var(--sage)}
+.is-linked .radar-core svg{color:#fff}
+
+.device-row{display:flex;align-items:center;gap:13px;width:100%;background:#fff;border-radius:20px;
+  padding:15px 17px;text-align:left;margin-top:6px;
+  box-shadow:0 8px 22px -18px rgba(107,63,42,.6);transition:transform .16s ease}
+.device-row:hover{transform:translateY(-2px)}
+.device-row b{display:block;font-family:var(--display);font-size:15px;font-weight:600;line-height:1.25}
+.device-row small{font-size:11.5px;color:var(--cocoa-soft)}
+.device-row .glyph{width:36px;height:36px;border-radius:11px;background:var(--blush);flex:none;
+  display:grid;place-items:center}
+.device-row .glyph svg{width:19px;height:19px;color:var(--cocoa)}
+.device-row .state{margin-left:auto;font-size:11.5px;font-weight:700;color:var(--sky)}
+
+/* ---------- home ---------- */
+.pet-strip{display:flex;align-items:center;gap:14px;margin:14px 0 18px}
+.avatar{width:58px;height:58px;border-radius:50%;background:var(--blush);display:grid;place-items:center;
+  flex:none;box-shadow:inset 0 0 0 2px var(--blush-deep)}
+.pet-strip h2{margin-bottom:1px}
+.pet-strip span{font-size:12.5px;color:var(--cocoa-soft)}
+
+.last-check{background:var(--blush);border-radius:24px;padding:18px 20px;margin-bottom:16px}
+.last-check .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.mini-vitals{display:flex;gap:18px}
+.mini-vitals div{flex:1}
+.mini-vitals .num{font-size:22px;display:block;line-height:1.1}
+.mini-vitals small{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--cocoa-soft)}
+
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.tile{background:#fff;border-radius:22px;padding:16px;text-align:left;
+  box-shadow:0 8px 22px -18px rgba(107,63,42,.6);transition:transform .16s ease}
+.tile:hover{transform:translateY(-3px)}
+.tile b{display:block;font-family:var(--display);font-size:15px;font-weight:600;margin-top:10px}
+.tile span{font-size:11.5px;color:var(--cocoa-soft);line-height:1.4;display:block;margin-top:2px}
+
+/* ---------- capture: three guided steps ---------- */
+.capture{background:var(--blush);align-items:center;text-align:center}
+.step-count{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--amber-deep);margin-top:2px}
+
+.stage-wrap{position:relative;width:100%;display:grid;place-items:center;margin:4px 0 0}
+.stage{width:274px;height:210px;border-radius:34px;background:#fff;display:grid;place-items:center;
+  box-shadow:0 14px 32px -18px rgba(107,63,42,.55);transition:transform .2s ease}
+.stage:active{transform:scale(.985)}
+.stage-svg{width:212px;height:188px;overflow:visible}
+
+/* Bright while previewing and after capture; dim only when a reading is
+   under way and the glove is not actually touching her. */
+#bun{transition:filter .4s ease,opacity .4s ease}
+.ph-reading:not(.is-live) #bun{filter:grayscale(.9) brightness(.94);opacity:.72}
+.fur{fill:#E8D3BE}
+.ear-in{fill:#F0C2BE}
+.blush{fill:#F3B0AC;opacity:.62}
+.eye{fill:#4A2E1E}
+.glint{fill:#fff}
+.nose{fill:#CE7C82}
+.mouth,.whisk{fill:none;stroke:#A8846C;stroke-width:2.4;stroke-linecap:round}
+.whisk{opacity:.6}
+
+/* --- preview target --- */
+#target,#glow,#success{opacity:0;pointer-events:none;
+  transition:opacity .3s ease,transform .55s cubic-bezier(.3,.9,.35,1)}
+.ph-preview #target{opacity:1}
+.tgt-ring{fill:none;stroke:var(--amber);stroke-width:2.6;stroke-dasharray:7 7;
+  animation:spin 7s linear infinite,breathe 1.9s ease-in-out infinite}
+.tgt-dot{fill:var(--amber);opacity:.85}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* --- live glow --- */
+.ph-reading.is-live #glow{opacity:1}
+.glow-halo{fill:rgba(232,145,45,.28);animation:pulse 1.6s ease-out infinite}
+.glow-core{fill:var(--amber)}
+@keyframes pulse{0%{transform:scale(.6);opacity:.85}70%{opacity:0}100%{transform:scale(1.35);opacity:0}}
+
+/* --- capture confirmation --- */
+.ph-captured #success{opacity:1}
+.ok-ring{fill:rgba(110,148,105,.16);stroke:var(--sage);stroke-width:3.4;
+  stroke-linecap:round;stroke-dasharray:132;stroke-dashoffset:132;
+  transform:rotate(-90deg)}
+.ph-captured .ok-ring{animation:draw .5s cubic-bezier(.3,.9,.35,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.ok-tick{fill:none;stroke:var(--sage);stroke-width:3.6;stroke-linecap:round;
+  stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24}
+.ph-captured .ok-tick{animation:draw .32s ease-out .42s forwards}
+
+/* --- hand --- */
+.hand{opacity:0;transition:opacity .4s ease,transform .55s cubic-bezier(.3,.9,.35,1)}
+.ph-reading.is-live .hand,.ph-captured .hand{opacity:1}
+.ph-preview .hand{opacity:.42;animation:nudge 1.9s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translate(0,0)}50%{transform:translate(3px,-5px)}}
+
+/* --- captured value floats up --- */
+.pop{position:absolute;top:34px;left:50%;transform:translateX(-50%);
+  font-family:var(--display);font-size:25px;font-weight:800;color:var(--sage);
+  opacity:0;pointer-events:none;white-space:nowrap}
+.pop.is-on{animation:rise 1.5s cubic-bezier(.3,.9,.35,1) forwards}
+@keyframes rise{0%{opacity:0;transform:translate(-50%,16px) scale(.8)}
+  22%{opacity:1;transform:translate(-50%,0) scale(1.06)}
+  34%{transform:translate(-50%,0) scale(1)}
+  72%{opacity:1}100%{opacity:0;transform:translate(-50%,-14px) scale(1)}}
+
+.heart-badge{position:absolute;right:22px;bottom:-14px;width:64px;height:64px;
+  display:grid;place-items:center;background:#fff;border-radius:50%;
+  box-shadow:0 10px 24px -12px rgba(107,63,42,.6);
+  transition:filter .4s ease,opacity .4s ease}
+.ph-reading:not(.is-live) .heart-badge{filter:grayscale(.9) brightness(.96);opacity:.75}
+.heart-badge svg{position:absolute;width:41px;height:41px;overflow:visible}
+.ph-reading.is-live .heart-badge svg{animation:beat .86s cubic-bezier(.22,.9,.3,1) infinite}
+@keyframes beat{0%{transform:scale(1)}9%{transform:scale(1.1)}18%{transform:scale(1)}
+  27%{transform:scale(1.055)}38%{transform:scale(1)}100%{transform:scale(1)}}
+.hb-out{fill:#F6E7DC}
+.hb-liquid{fill:var(--amber);transition:transform .18s linear}
+.hb-rim{fill:none;stroke:rgba(107,63,42,.22);stroke-width:3}
+.wave-shift{animation:drift 2.6s linear infinite}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(50px)}}
+.heart-badge b{position:relative;font-family:var(--display);font-size:12px;font-weight:800;
+  font-variant-numeric:tabular-nums;color:var(--cocoa)}
+
+.contact{display:inline-flex;align-items:center;gap:8px;margin-top:24px;
+  padding:6px 14px;border-radius:99px;background:rgba(107,63,42,.09);
+  font-size:12px;font-weight:700;color:var(--cocoa-soft);transition:all .3s ease}
+.contact .c-dot{width:7px;height:7px;border-radius:50%;background:var(--cocoa-soft);opacity:.55}
+.ph-reading.is-live .contact{background:rgba(110,148,105,.18);color:#4B7046}
+.ph-reading.is-live .contact .c-dot{background:var(--sage);opacity:1;animation:pulse 1.6s ease-out infinite}
+.ph-captured .contact{background:rgba(110,148,105,.18);color:#4B7046}
+.ph-captured .contact .c-dot{background:var(--sage);opacity:1}
+.ph-preview .contact{opacity:0}
+
+.pad-note{font-size:12.5px;color:var(--cocoa-soft);max-width:272px;margin:8px auto 0;
+  min-height:34px;line-height:1.4}
+
+.steps{display:flex;gap:9px;width:100%;margin-top:4px}
+.step{flex:1;background:#fff;border-radius:18px;padding:12px 6px 11px;
+  opacity:.42;transition:opacity .3s ease,box-shadow .3s ease}
+.step.is-now{opacity:1;box-shadow:0 0 0 2px var(--amber)}
+.step.is-done{opacity:1;box-shadow:0 0 0 2px rgba(110,148,105,.55)}
+.step-icon{width:26px;height:26px;margin:0 auto 6px;color:var(--cocoa-soft);transition:color .3s ease}
+.step.is-now .step-icon{color:var(--amber)}
+.step.is-done .step-icon{color:var(--sage)}
+.step-icon svg{width:100%;height:100%}
+.step b{display:block;font-family:var(--display);font-size:17px;font-weight:700;line-height:1.15}
+.step b:empty::after{content:"\2014";color:var(--cocoa-soft);font-weight:400}
+.step small{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--cocoa-soft)}
+
+.pbar-wrap{width:100%;margin-top:14px}
+.pbar-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.pbar-head small{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--cocoa-soft)}
+.pbar-head b{font-family:var(--display);font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.pbar{height:9px;border-radius:99px;background:rgba(107,63,42,.14);overflow:hidden}
+.pbar i{display:block;height:100%;width:0;border-radius:99px;background:var(--amber);transition:width .16s linear}
+.pbar.is-done i{background:var(--sage)}
+#go-btn{margin-top:14px}
+#go-btn[hidden]{display:none}
+
+/* ---------- report ---------- */
+.verdict{border-radius:26px;padding:20px;margin:14px 0 18px;color:#fff;background:var(--sage)}
+.verdict.is-warn{background:var(--rose)}
+.verdict h2{font-size:22px;margin-bottom:5px}
+.verdict p{color:rgba(255,255,255,.92);font-size:13.5px}
+.vital{background:#fff;border-radius:22px;padding:16px 18px;margin-bottom:10px;
+  box-shadow:0 8px 22px -18px rgba(107,63,42,.6)}
+.vital-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.vital-top .num{font-size:27px}
+.vital-top .unit{font-size:12px;font-weight:600;color:var(--cocoa-soft);margin-left:3px;font-family:var(--body)}
+.vital-name{font-family:var(--display);font-size:15px;font-weight:600}
+.scale{position:relative;height:8px;border-radius:99px;background:rgba(107,63,42,.1);margin-bottom:7px}
+.band{position:absolute;top:0;bottom:0;border-radius:99px;background:rgba(110,148,105,.42)}
+.pin{position:absolute;top:50%;width:15px;height:15px;border-radius:50%;background:var(--sage);
+  border:3px solid #fff;transform:translate(-50%,-50%);box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.pin.is-warn{background:var(--rose)}
+.scale-legend{display:flex;justify-content:space-between;font-size:10.5px;color:var(--cocoa-soft);font-weight:600}
+.note{background:var(--blush);border-radius:22px;padding:16px 18px;margin:14px 0 10px}
+.note .eyebrow{display:block;margin-bottom:6px}
+.note p{color:var(--cocoa);font-size:13.5px}
+
+/* ---------- booking confirmed ---------- */
+.done{background:var(--blush);align-items:center;text-align:center}
+.appt{width:100%;background:#fff;border-radius:24px;padding:6px 20px;
+  box-shadow:0 8px 22px -18px rgba(107,63,42,.6)}
+.appt>div{display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+  padding:14px 0;border-bottom:1px solid var(--line);text-align:left}
+.appt>div:last-child{border-bottom:0}
+.appt b{font-family:var(--display);font-size:14.5px;font-weight:600;text-align:right}
+.paws{width:100%;max-width:298px;margin:0 auto}
+.paws svg{width:100%;height:auto;display:block;animation:wave 3.6s ease-in-out infinite}
+@keyframes wave{0%,100%{transform:translateY(4px)}50%{transform:translateY(-6px)}}
+.done-acts{width:100%;margin-top:16px}
+
+/* ---------- clinics ---------- */
+.clinic{display:flex;gap:14px;align-items:flex-start;background:#fff;border-radius:20px;
+  padding:15px 16px;margin-bottom:10px;text-align:left;width:100%;
+  box-shadow:0 8px 22px -18px rgba(107,63,42,.6);transition:transform .16s ease}
+.clinic:hover{transform:translateX(3px)}
+.clinic-dot{width:9px;height:9px;border-radius:50%;background:var(--sage);margin-top:6px;flex:none}
+.clinic-dot.is-shut{background:var(--cocoa-soft);opacity:.5}
+.clinic b{display:block;font-family:var(--display);font-size:15px;font-weight:600;line-height:1.25}
+.clinic span{font-size:12px;color:var(--cocoa-soft)}
+.clinic .dist{margin-left:auto;font-size:12px;font-weight:700;color:var(--cocoa-soft);white-space:nowrap}
+
+/* ---------- calendar ---------- */
+.cal{background:#fff;border-radius:24px;padding:18px;box-shadow:0 8px 22px -18px rgba(107,63,42,.6)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
+.cal-grid span{font-size:10px;font-weight:700;text-align:center;color:var(--cocoa-soft);padding-bottom:4px}
+.day{aspect-ratio:1;border-radius:12px;font-size:13px;font-weight:600;display:grid;place-items:center;
+  background:var(--milk);transition:background .14s ease}
+.day:hover{background:var(--blush)}
+.day.is-off{opacity:.3;pointer-events:none}
+.day.is-sel{background:var(--amber);color:#fff}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.slot{padding:11px 4px;border-radius:14px;background:#fff;font-size:13px;font-weight:600;
+  box-shadow:inset 0 0 0 1.5px var(--line)}
+.slot.is-sel{background:var(--amber);color:#fff;box-shadow:none}
+
+/* ---------- nav ---------- */
+.nav{position:absolute;left:0;right:0;bottom:0;z-index:50;
+  height:calc(58px + var(--safe-bot));
+  background:rgba(251,245,241,.94);backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);display:flex;
+  padding:9px 22px calc(var(--safe-bot) - 8px);
+  opacity:0;visibility:hidden;transition:opacity var(--dur) ease,visibility var(--dur)}
+.nav.is-on{opacity:1;visibility:visible}
+.nav button{flex:1;display:grid;place-items:center;gap:3px;color:var(--cocoa-soft);
+  font-size:10px;font-weight:700;letter-spacing:.03em}
+.nav button.is-on{color:var(--amber)}
+.nav svg{width:23px;height:23px}
+
+.back{align-self:flex-start;display:flex;align-items:center;gap:6px;font-size:13px;
+  font-weight:700;color:var(--cocoa-soft);margin-bottom:14px}
+.back:hover{color:var(--cocoa)}
+.spacer{flex:1;min-height:12px}
+.stack>*+*{margin-top:10px}
+.legend{max-width:420px;text-align:center;font-size:12.5px;color:var(--cocoa-soft);line-height:1.6}
+.legend b{color:var(--cocoa)}
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="island"></div>
+  <div class="home-bar"></div>
+  <div class="statusbar"><span>9:41</span><span>PetPal</span></div>
+
+  <!-- ============ SPLASH ============ -->
+  <section class="screen splash is-on" id="s-splash">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 68 62" fill="none" aria-hidden="true">
+        <path d="M34 3C17 3 3 13.6 3 26.6c0 7.5 4.7 14.2 12 18.5-.4 4.2-2.6 8.3-6.2 11.9 6.2-1 11.7-3.6 15.8-7.3 2.9.7 6 1.1 9.4 1.1 17 0 31-10.6 31-23.6S51 3 34 3z" fill="#F2CE72"/>
+        <g fill="#E8912D">
+          <ellipse cx="23" cy="19" rx="4.4" ry="5.6"/>
+          <ellipse cx="33" cy="16" rx="4.6" ry="6"/>
+          <ellipse cx="43" cy="19" rx="4.4" ry="5.6"/>
+          <ellipse cx="50" cy="27" rx="3.8" ry="4.8"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M34 25c6.3 0 11.4 5.1 11.4 10.4 0 4.3-3.3 6.3-7.4 6.3-2.4 0-3.1-.8-4-.8s-1.6.8-4 .8c-4.1 0-7.4-2-7.4-6.3C22.6 30.1 27.7 25 34 25zm-1.6 4.6h3.2v3.6h3.6v3.2h-3.6v3.6h-3.2v-3.6h-3.6v-3.2h3.6v-3.6z"/>
+        </g>
+      </svg>
+    </div>
+    <div class="wordmark">PetPal</div>
+    <p style="margin:10px 0 32px;max-width:260px">A health check that starts with a hug — and ends on your vet's screen.</p>
+    <button class="btn" onclick="go('signin')">Get started</button>
+    <button class="btn btn--quiet" onclick="go('home')">I already have an account</button>
+  </section>
+
+  <!-- ============ SIGN IN ============ -->
+  <section class="screen" id="s-signin">
+    <button class="back" onclick="go('splash')">← Back</button>
+    <span class="eyebrow">Welcome</span>
+    <h1 style="margin:6px 0">Set up your pet</h1>
+    <p style="margin-bottom:22px">One account covers every animal in the house.</p>
+    <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" placeholder="you@example.com"></div>
+    <div class="field"><label for="f-pass">Password</label><input id="f-pass" type="password" placeholder="At least 8 characters"></div>
+    <div class="field"><label for="f-pet">Pet's name</label><input id="f-pet" type="text" value="YaoYao"></div>
+    <div style="margin-top:8px"><button class="btn" onclick="go('home')">Create account</button></div>
+    <button class="btn btn--quiet" onclick="go('home')">Sign in instead</button>
+  </section>
+
+  <!-- ============ HOME ============ -->
+  <section class="screen" id="s-home">
+    <span class="eyebrow">Tuesday, 21 July</span>
+    <div class="pet-strip">
+      <div class="avatar" aria-hidden="true">
+        <svg width="30" height="30" viewBox="0 0 48 48" fill="#B07E4E">
+          <ellipse cx="14" cy="15" rx="5" ry="6.6"/><ellipse cx="24" cy="11" rx="5" ry="7"/>
+          <ellipse cx="34" cy="15" rx="5" ry="6.6"/><ellipse cx="41" cy="25" rx="4.4" ry="5.6"/>
+          <path d="M24 22c6.5 0 12 5.2 12 10.6 0 4.4-3.4 6.4-7.6 6.4-2.4 0-3.2-.8-4.4-.8s-2 .8-4.4.8c-4.2 0-7.6-2-7.6-6.4C12 27.2 17.5 22 24 22z"/>
+        </svg>
+      </div>
+      <div><h2>YaoYao</h2><span>Holland lop rabbit · 2 years · 1.8 kg</span></div>
+    </div>
+
+    <div class="last-check">
+      <div class="row"><span class="eyebrow">Last check · 3 days ago</span><span style="font-size:12px;font-weight:700;color:var(--sage)">All in range</span></div>
+      <div class="mini-vitals">
+        <div><span class="num">258</span><small>bpm pulse</small></div>
+        <div><span class="num">39.0</span><small>°C temp</small></div>
+        <div><span class="num">42</span><small>breaths</small></div>
+      </div>
+    </div>
+
+    <button class="bt-chip is-off" id="home-chip" onclick="go('connect')">
+      <span class="dot"></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m7 7 10 10-5 5V2l5 5L7 17"/></svg>
+      <span id="home-chip-text">Glove not connected</span>
+    </button>
+
+    <button class="btn" onclick="startCheckup()">Start a checkup</button>
+
+    <div class="tiles">
+      <button class="tile" onclick="go('report')">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#E8912D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
+        <b>Health reports</b><span>4 checks saved</span>
+      </button>
+      <button class="tile" onclick="go('book')">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#E8912D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <b>Book a visit</b><span>Next free: Thu 10:30</span>
+      </button>
+      <button class="tile" onclick="go('clinics')">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#CE4F63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><path d="M12 8v6M9 11h6"/></svg>
+        <b>Open now</b><span>3 clinics near you</span>
+      </button>
+      <button class="tile" onclick="go('connect')">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3E7BC4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 7 10 10-5 5V2l5 5L7 17"/></svg>
+        <b>PetPal Glove</b><span id="tile-glove">Tap to pair</span>
+      </button>
+    </div>
+    <div class="spacer"></div>
+  </section>
+
+  <!-- ============ BLUETOOTH PAIRING ============ -->
+  <section class="screen connect" id="s-connect">
+    <div class="radar" aria-hidden="true">
+      <span></span><span></span><span></span>
+      <div class="radar-core" id="radar-core">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 7 10 10-5 5V2l5 5L7 17"/></svg>
+      </div>
+    </div>
+    <h1 style="margin:6px 0 4px" id="bt-title">Looking for your glove</h1>
+    <p style="max-width:262px" id="bt-sub">Switch the PetPal glove on and keep it within a few metres.</p>
+
+    <div style="width:100%;min-height:88px;margin-top:14px" id="bt-slot"></div>
+
+    <button class="btn btn--quiet" onclick="go('home')">Not now</button>
+    <div class="spacer"></div>
+  </section>
+
+  <!-- ============ CAPTURE — three guided steps ============ -->
+  <section class="screen capture" id="s-capture">
+    <div class="bt-chip" id="cap-chip">
+      <span class="dot"></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m7 7 10 10-5 5V2l5 5L7 17"/></svg>
+      <span id="cap-chip-text">PetPal Glove &middot; 82%</span>
+    </div>
+
+    <div class="banner" id="cap-banner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+      <span><b id="banner-title">Battery low</b><small id="banner-body">Charge the glove first.</small></span>
+    </div>
+
+    <span class="step-count" id="step-count">Step 1 of 3</span>
+    <h1 style="margin:2px 0 0" id="cap-title">Hold a front paw</h1>
+
+    <div class="stage-wrap">
+      <button class="stage" id="stage" aria-describedby="pad-note">
+        <svg class="stage-svg" viewBox="0 0 210 186" aria-hidden="true">
+          <g id="bun">
+            <!-- ears -->
+            <g transform="rotate(-9 88 60)">
+              <ellipse class="fur" cx="88" cy="52" rx="14" ry="42"/>
+              <ellipse class="ear-in" cx="88" cy="54" rx="7" ry="32"/>
+            </g>
+            <g transform="rotate(9 122 60)">
+              <ellipse class="fur" cx="122" cy="52" rx="14" ry="42"/>
+              <ellipse class="ear-in" cx="122" cy="54" rx="7" ry="32"/>
+            </g>
+            <!-- body + head -->
+            <ellipse class="fur" cx="105" cy="146" rx="50" ry="36"/>
+            <circle  class="fur" cx="105" cy="102" r="42"/>
+            <!-- paws -->
+            <ellipse class="fur" cx="84" cy="176" rx="15" ry="10"/>
+            <ellipse class="fur" cx="126" cy="176" rx="15" ry="10"/>
+            <!-- face -->
+            <circle class="blush" cx="79" cy="110" r="9"/>
+            <circle class="blush" cx="131" cy="110" r="9"/>
+            <ellipse class="eye" cx="90" cy="98" rx="5" ry="6"/>
+            <ellipse class="eye" cx="120" cy="98" rx="5" ry="6"/>
+            <circle class="glint" cx="92" cy="96" r="1.8"/>
+            <circle class="glint" cx="122" cy="96" r="1.8"/>
+            <path class="nose" d="M105 110l-5 4h10z"/>
+            <path class="mouth" d="M105 114v4M105 118q-5 5-9 0M105 118q5 5 9 0"/>
+            <path class="whisk" d="M62 112h-14M64 118l-14 4M148 112h14M146 118l14 4"/>
+          </g>
+
+          <!-- preview: dashed target shows where to place the hand -->
+          <g id="target">
+            <circle class="tgt-ring" cx="0" cy="0" r="21"/>
+            <circle class="tgt-dot"  cx="0" cy="0" r="5"/>
+          </g>
+
+          <!-- reading: live glow -->
+          <g id="glow">
+            <circle class="glow-halo" cx="0" cy="0" r="20"/>
+            <circle class="glow-core" cx="0" cy="0" r="8"/>
+          </g>
+
+          <!-- captured: ring draws itself, then a tick -->
+          <g id="success">
+            <circle class="ok-ring" cx="0" cy="0" r="21"/>
+            <path class="ok-tick" d="M-8 0l5.5 5.5L9-5"/>
+          </g>
+
+          <!-- hand, one shape per step -->
+          <g id="hand" class="hand" fill="none" stroke="#6B3F2A" stroke-width="4"
+             stroke-linecap="round" stroke-linejoin="round"></g>
+        </svg>
+      </button>
+
+      <div class="pop" id="pop" aria-hidden="true"></div>
+
+      <div class="heart-badge" id="heart-badge" aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <defs><clipPath id="hb-clip">
+            <path d="M50 88C50 88 8 62 8 36 8 20 20 10 32 10c9 0 15 5 18 10 3-5 9-10 18-10 12 0 24 10 24 26 0 26-42 52-42 52z"/>
+          </clipPath></defs>
+          <path class="hb-out" d="M50 88C50 88 8 62 8 36 8 20 20 10 32 10c9 0 15 5 18 10 3-5 9-10 18-10 12 0 24 10 24 26 0 26-42 52-42 52z"/>
+          <g clip-path="url(#hb-clip)">
+            <g class="hb-liquid" id="hb-liquid" transform="translate(0 100)">
+              <g class="wave-shift"><path d="M-60 0q12.5-7 25 0t25 0 25 0 25 0 25 0 25 0 25 0v120h-200z"/></g>
+            </g>
+          </g>
+          <path class="hb-rim" d="M50 88C50 88 8 62 8 36 8 20 20 10 32 10c9 0 15 5 18 10 3-5 9-10 18-10 12 0 24 10 24 26 0 26-42 52-42 52z"/>
+        </svg>
+        <b id="hb-pct">0%</b>
+      </div>
+    </div>
+
+    <div class="contact" id="contact">
+      <span class="c-dot"></span><span id="contact-text">No contact yet</span>
+    </div>
+    <p class="pad-note" id="pad-note">Tap the rabbit when the glove is touching. Tap again if she wriggles free.</p>
+
+    <div class="steps" id="steps">
+      <div class="step" id="st-0">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        </div>
+        <b id="sv-0"></b><small>Pulse</small>
+      </div>
+      <div class="step" id="st-1">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V4a2 2 0 1 0-4 0v10.76a4.5 4.5 0 1 0 4 0z"/></svg>
+        </div>
+        <b id="sv-1"></b><small>Temp</small>
+      </div>
+      <div class="step" id="st-2">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9M8.5 8.5 12 12l3.5-3.5"/><path d="M8.5 8.5C6 9 4 11.5 4 14.5V19a2 2 0 0 0 2.8 1.8l2.4-1A2 2 0 0 0 10.5 18v-5"/><path d="M15.5 8.5C18 9 20 11.5 20 14.5V19a2 2 0 0 1-2.8 1.8l-2.4-1A2 2 0 0 1 13.5 18v-5"/></svg>
+        </div>
+        <b id="sv-2"></b><small>Breaths</small>
+      </div>
+    </div>
+
+    <div class="pbar-wrap">
+      <div class="pbar-head"><small id="pbar-label">Step 1 &middot; not started</small><b id="pbar-pct">0%</b></div>
+      <div class="pbar" id="pbar"><i id="pbar-fill"></i></div>
+    </div>
+
+    <button class="btn" id="go-btn">Start reading</button>
+    <button class="btn btn--quiet" onclick="resetCapture();go('home')">Cancel checkup</button>
+    <div class="spacer"></div>
+  </section>
+
+  <!-- ============ REPORT ============ -->
+  <section class="screen" id="s-report">
+    <button class="back" onclick="go('home')">← Home</button>
+    <span class="eyebrow">Checkup · today, 14:06</span>
+    <h1 style="margin:6px 0 0">YaoYao's reading</h1>
+    <div class="verdict is-warn">
+      <h2>One reading is above range</h2>
+      <p>YaoYao's pulse is higher than normal for a rabbit her size. Temperature and breathing look fine. This is worth a vet's eyes, not an emergency room.</p>
+    </div>
+    <div class="stack" id="vitals"></div>
+    <div class="note">
+      <span class="eyebrow">What to do next</span>
+      <p>Keep her calm and somewhere quiet, and take the reading again in two hours. If the pulse stays high, send this report to a vet.</p>
+    </div>
+    <div style="margin-top:6px"><button class="btn" onclick="go('book')">Send to a vet</button></div>
+    <button class="btn btn--quiet" onclick="startCheckup()">Take another reading</button>
+    <div class="spacer"></div>
+  </section>
+
+  <!-- ============ CLINICS ============ -->
+  <section class="screen" id="s-clinics">
+    <button class="back" onclick="go('home')">← Home</button>
+    <span class="eyebrow">Brooklyn · 21:40</span>
+    <h1 style="margin:6px 0">Open right now</h1>
+    <p style="margin-bottom:18px">Sorted by who can see YaoYao tonight, not by distance.</p>
+    <div id="clinics"></div>
+    <div class="spacer"></div>
+  </section>
+
+  <!-- ============ BOOK ============ -->
+  <section class="screen" id="s-book">
+    <button class="back" onclick="go('home')">← Home</button>
+    <span class="eyebrow">Clinton Hill Animal Clinic</span>
+    <h1 style="margin:6px 0">Pick a time</h1>
+    <p style="margin-bottom:16px">Your latest reading is attached, so the vet sees it before you arrive.</p>
+    <div class="cal">
+      <h2 style="font-size:16px">July 2026</h2>
+      <div class="cal-grid" id="cal"></div>
+      <div class="slots" id="slots"></div>
+    </div>
+    <div style="margin-top:16px"><button class="btn" onclick="go('confirmed')">Confirm booking</button></div>
+    <div class="spacer"></div>
+  </section>
+
+  <!-- ============ BOOKING CONFIRMED ============ -->
+  <section class="screen done" id="s-confirmed">
+    <span class="eyebrow">Appointment</span>
+    <h1 style="margin:6px 0 8px">Confirmed</h1>
+
+    <div class="appt">
+      <div><span class="eyebrow">When</span><b>Thu 23 July &middot; 10:30</b></div>
+      <div><span class="eyebrow">Where</span><b>Clinton Hill Animal Clinic</b></div>
+      <div><span class="eyebrow">For</span><b>YaoYao</b></div>
+    </div>
+
+    <div class="note" style="margin-top:14px">
+      <span class="eyebrow">Before you come in</span>
+      <p>Take one more reading on the morning of the visit. A fresh set of vitals next to today&rsquo;s gives the vet a trend to read, not just a snapshot.</p>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="paws" aria-hidden="true">
+      <svg viewBox="0 0 298 200" preserveAspectRatio="xMidYMax meet"><g transform="translate(46 0)"><rect x="-19" y="50" width="38" height="150" rx="19" fill="#8C5E3C"/><ellipse cx="-13.5" cy="63" rx="4.8" ry="6.2" fill="#E3BFA4"/><ellipse cx="-4.5" cy="63" rx="4.8" ry="6.2" fill="#E3BFA4"/><ellipse cx="4.6" cy="63" rx="4.8" ry="6.2" fill="#E3BFA4"/><ellipse cx="13.6" cy="63" rx="4.8" ry="6.2" fill="#E3BFA4"/><ellipse cx="0" cy="81" rx="12.5" ry="10.5" fill="#E3BFA4"/></g><g transform="translate(114 0)"><rect x="-19" y="18" width="38" height="182" rx="19" fill="#E8912D"/><ellipse cx="-13.5" cy="31" rx="4.8" ry="6.2" fill="#F8DCB4"/><ellipse cx="-4.5" cy="31" rx="4.8" ry="6.2" fill="#F8DCB4"/><ellipse cx="4.6" cy="31" rx="4.8" ry="6.2" fill="#F8DCB4"/><ellipse cx="13.6" cy="31" rx="4.8" ry="6.2" fill="#F8DCB4"/><ellipse cx="0" cy="49" rx="12.5" ry="10.5" fill="#F8DCB4"/></g><g transform="translate(186 0)"><rect x="-19" y="62" width="38" height="138" rx="19" fill="#B98A5E"/><ellipse cx="-13.5" cy="75" rx="4.8" ry="6.2" fill="#EBD6BC"/><ellipse cx="-4.5" cy="75" rx="4.8" ry="6.2" fill="#EBD6BC"/><ellipse cx="4.6" cy="75" rx="4.8" ry="6.2" fill="#EBD6BC"/><ellipse cx="13.6" cy="75" rx="4.8" ry="6.2" fill="#EBD6BC"/><ellipse cx="0" cy="93" rx="12.5" ry="10.5" fill="#EBD6BC"/></g><g transform="translate(252 0)"><rect x="-19" y="36" width="38" height="164" rx="19" fill="#3F3029"/><ellipse cx="-13.5" cy="49" rx="4.8" ry="6.2" fill="#8D786A"/><ellipse cx="-4.5" cy="49" rx="4.8" ry="6.2" fill="#8D786A"/><ellipse cx="4.6" cy="49" rx="4.8" ry="6.2" fill="#8D786A"/><ellipse cx="13.6" cy="49" rx="4.8" ry="6.2" fill="#8D786A"/><ellipse cx="0" cy="67" rx="12.5" ry="10.5" fill="#8D786A"/></g></svg>
+    </div>
+
+    <div class="done-acts">
+      <button class="btn" onclick="go('home')">Done</button>
+      <button class="btn btn--quiet" onclick="go('capture')">Take a reading now</button>
+    </div>
+    <div class="spacer"></div>
+  </section>
+
+  <!-- ============ NAV ============ -->
+  <nav class="nav" id="nav">
+    <button data-go="home" class="is-on">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home
+    </button>
+    <button data-go="capture">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>Checkup
+    </button>
+    <button data-go="clinics">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Care
+    </button>
+  </nav>
+</div>
+
+<div class="demo">
+  <span>Glove state:</span>
+  <button data-glove="good" class="is-on">Healthy · 82%</button>
+  <button data-glove="low">Battery low · 9%</button>
+  <button data-glove="weak">Weak signal</button>
+</div>
+
+<p class="legend"><b>iPhone 17 — 402 × 874 pt.</b> Start a checkup: the glove pairs over Bluetooth first, then tap the heart once and let go. Switch the glove state above to see how the app behaves when the hardware is unreliable.</p>
+
+<script>
+/* ---------------- data ---------------- */
+const VITALS = [
+  {key:'pulse', name:'Pulse',       value:342,  unit:'bpm', lo:130,  hi:325,  min:80, max:400, dp:0},
+  {key:'temp',  name:'Temperature', value:39.1, unit:'\u00B0C',  lo:38.6, hi:40.2, min:36, max:42,  dp:1},
+  {key:'resp',  name:'Breathing',   value:44,   unit:'/min',lo:30,   hi:60,   min:15, max:80,  dp:0}
+];
+
+/* Each vital is read from a different part of the body, so the capture is
+   three separate gestures. The user gets a pause between them to reposition. */
+const STEPS = [
+  {title:'Hold a front paw',
+   where:'Front paw',
+   prep:'Cup one front paw inside the glove, pads against your palm.',
+   note:'Feeling for the pulse in the paw.',
+   done:'Move your finger to her ear when she settles.',
+   glow:[84,176], hand:'M52 178q0 -22 22 -22h20q22 0 22 22'},
+  {title:'Finger inside the ear',
+   where:'Inner ear',
+   prep:'Slip one finger just inside the ear, where the vessels run close to the surface.',
+   note:'Reading temperature off the ear.',
+   done:'Now bring your palm down to her chest.',
+   glow:[88,48],  hand:'M40 16l30 22M70 38h14'},
+  {title:'Palm on the chest',
+   where:'Chest',
+   prep:'Rest a flat palm on her chest, just behind the front legs.',
+   note:'Listening for breaths. Hold still.',
+   done:'All three captured.',
+   glow:[105,140],hand:''}
+];
+const MARKS = [1/3, 2/3, 1.0];
+const CLINICS = [
+  {name:'Clinton Hill Animal Clinic', note:'Open until 23:00 · walk-ins tonight', dist:'0.6 mi', open:true},
+  {name:'Prospect Heights Emergency Vet', note:'Open 24 hours', dist:'1.4 mi', open:true},
+  {name:'Fort Greene Veterinary Care', note:'Open until 22:00', dist:'1.9 mi', open:true},
+  {name:'Brooklyn Cat & Small Pet Hospital', note:'Closed · opens 08:00', dist:'0.9 mi', open:false}
+];
+const NAV_SCREENS = ['home','capture','clinics','report','book','confirmed'];
+
+let paired = false;
+
+/* ---------------- glove condition ----------------
+   A device that reads vital signs has to be honest about its own state.
+   A reading taken on a dying battery or a weak link is not the same
+   evidence as a clean one, and the vet needs to know which they got. */
+const GLOVE = {
+  good: {battery:82, label:'PetPal Glove · 82%', signal:'signal strong', warn:null},
+  low:  {battery:9,  label:'PetPal Glove · 9%',  signal:'battery low',
+         warn:{title:'Battery at 9%',
+               body:'A reading takes about seven seconds. If the glove dies partway through you lose it — charge first if you can.'}},
+  weak: {battery:64, label:'PetPal Glove · weak signal', signal:'signal weak',
+         warn:{title:'Signal is weak',
+               body:'Move within a couple of metres of the glove. Readings taken on a weak link get flagged for the vet.'}}
+};
+let gloveState = 'good';
+
+function applyGlove(){
+  const g = GLOVE[gloveState];
+  const warn = !!g.warn;
+  ['home-chip','cap-chip'].forEach(id=>{
+    const c = document.getElementById(id);
+    if(id==='home-chip' && !paired) return;
+    c.classList.toggle('is-warn', warn);
+  });
+  document.getElementById('cap-chip-text').textContent = g.label;
+  if(paired) document.getElementById('home-chip-text').textContent = g.label;
+  document.getElementById('tile-glove').textContent = paired ? g.label.replace('PetPal Glove · ','') : 'Tap to pair';
+  const b = document.getElementById('cap-banner');
+  b.classList.toggle('is-on', warn);
+  if(warn){
+    document.getElementById('banner-title').textContent = g.warn.title;
+    document.getElementById('banner-body').textContent  = g.warn.body;
+  }
+}
+document.querySelectorAll('.demo button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('.demo button').forEach(x=>x.classList.remove('is-on'));
+    b.classList.add('is-on');
+    gloveState = b.dataset.glove;
+    applyGlove();
+    if(document.getElementById('s-capture').classList.contains('is-on')) resetCapture();
+  });
+});
+
+/* ---------------- router ---------------- */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('is-on'));
+  const el = document.getElementById('s-'+id);
+  el.classList.add('is-on'); el.scrollTop = 0;
+  document.getElementById('nav').classList.toggle('is-on', NAV_SCREENS.includes(id));
+  document.querySelectorAll('.nav button').forEach(b=>{
+    b.classList.toggle('is-on', b.dataset.go===id
+      || (id==='report' && b.dataset.go==='capture')
+      || (id==='book'   && b.dataset.go==='clinics')
+      || (id==='confirmed' && b.dataset.go==='clinics'));
+  });
+  if(id==='capture') resetCapture();
+  if(id==='connect') startScan();
+}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>{
+  if(b.dataset.go==='capture') return startCheckup();
+  go(b.dataset.go);
+}));
+
+function startCheckup(){ paired ? go('capture') : go('connect'); }
+
+/* ---------------- bluetooth pairing ---------------- */
+const scr    = document.getElementById('s-connect');
+const btTitle= document.getElementById('bt-title');
+const btSub  = document.getElementById('bt-sub');
+const btSlot = document.getElementById('bt-slot');
+let scanTimer = null;
+
+function startScan(){
+  clearTimeout(scanTimer);
+  if(paired){ showPaired(); return; }
+  scr.classList.remove('is-linked');
+  btTitle.textContent = 'Looking for your glove';
+  btSub.textContent = 'Switch the PetPal glove on and keep it within a few metres.';
+  btSlot.innerHTML = '';
+  scanTimer = setTimeout(showFound, 1700);
+}
+
+function showFound(){
+  btTitle.textContent = 'One device nearby';
+  btSub.textContent = 'This is the glove registered to your account.';
+  btSlot.innerHTML =
+    '<button class="device-row" id="row"><span class="glyph">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8"/>' +
+    '<path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>' +
+    '</span><span><b>PetPal Glove</b><small id="row-meta">Battery 82% · signal strong</small></span>' +
+    '<span class="state">Connect</span></button>';
+  document.getElementById('row').addEventListener('click', connect);
+}
+
+function connect(){
+  btTitle.textContent = 'Connecting';
+  btSub.textContent = 'Handshaking with the glove.';
+  document.querySelector('#row .state').textContent = 'Pairing…';
+  setTimeout(()=>{
+    paired = true;
+    showPaired();
+    setTimeout(()=>go('capture'), 900);
+  }, 1300);
+}
+
+function showPaired(){
+  scr.classList.add('is-linked');
+  btTitle.textContent = 'Glove connected';
+  btSub.textContent = 'You can put it on YaoYao now.';
+  btSlot.innerHTML =
+    '<div class="device-row"><span class="glyph">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8"/>' +
+    '<path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>' +
+    '</span><span><b>PetPal Glove</b><small>Battery ' + GLOVE[gloveState].battery + '% · ' + GLOVE[gloveState].signal + '</small></span>' +
+    '<span class="state" style="color:var(--sage)">Connected</span></div>';
+  document.getElementById('home-chip').classList.remove('is-off');
+  applyGlove();
+}
+
+/* ---------------- three-step capture ----------------
+   Every step runs preview -> reading -> captured.
+   The preview exists because the owner has to know where their hand goes
+   before a timer starts; the captured pause exists because moving a hand
+   from a paw to an ear takes as long as it takes. In between, contact
+   drives everything: the rabbit, the heart and the percentage only move
+   while the glove is actually touching her. A device that animates on
+   nothing teaches owners to trust readings that never happened. */
+const STEP_MS = 2800;
+
+const stage   = document.getElementById('stage');
+const scrEl   = document.getElementById('s-capture');
+const targetEl= document.getElementById('target');
+const glowEl  = document.getElementById('glow');
+const okEl    = document.getElementById('success');
+const handEl  = document.getElementById('hand');
+const popEl   = document.getElementById('pop');
+const liquid  = document.getElementById('hb-liquid');
+const hbPct   = document.getElementById('hb-pct');
+const title   = document.getElementById('cap-title');
+const counter = document.getElementById('step-count');
+const note    = document.getElementById('pad-note');
+const cText   = document.getElementById('contact-text');
+const fillEl  = document.getElementById('pbar-fill');
+const pbar    = document.getElementById('pbar');
+const pct     = document.getElementById('pbar-pct');
+const plabel  = document.getElementById('pbar-label');
+const goBtn   = document.getElementById('go-btn');
+
+let step = 0, stepMs = 0, raf = null, last = 0;
+let phase = 'preview', touching = false, weakFired = false;
+
+function setPhase(p){
+  phase = p;
+  scrEl.classList.remove('ph-preview','ph-reading','ph-captured');
+  scrEl.classList.add('ph-' + p);
+}
+
+function paintMeters(){
+  const p = Math.min((step + stepMs / STEP_MS) / 3, 1);
+  liquid.setAttribute('transform', 'translate(0 ' + (92 - p * 86) + ')');
+  hbPct.textContent = Math.round(p * 100) + '%';
+  fillEl.style.width = (p * 100) + '%';
+  pct.textContent = Math.round(p * 100) + '%';
+}
+
+function moveMarkers(i){
+  const t = 'translate(' + STEPS[i].glow[0] + ' ' + STEPS[i].glow[1] + ')';
+  [targetEl, glowEl, okEl].forEach(el=>el.setAttribute('transform', t));
+  handEl.innerHTML = '<path d="' + STEPS[i].hand + '"/>';
+}
+
+/* --- 1. preview: show where the hand goes, before any timer runs --- */
+function preview(i){
+  setPhase('preview');
+  touching = false; stepMs = 0; weakFired = false;
+  scrEl.classList.remove('is-live');
+  cancelAnimationFrame(raf); raf = null;
+  moveMarkers(i);
+  counter.textContent = 'Step ' + (i + 1) + ' of 3 \u00B7 ' + STEPS[i].where;
+  title.textContent   = STEPS[i].title;
+  note.textContent    = STEPS[i].prep;
+  plabel.textContent  = 'Step ' + (i + 1) + ' \u00B7 get in position';
+  goBtn.textContent   = 'I\u2019m in position';
+  goBtn.hidden = false;
+  document.querySelectorAll('.step').forEach((el,n)=>{
+    el.classList.toggle('is-now', n === i);
+  });
+  paintMeters();
+}
+
+/* --- 2. reading: gated on contact --- */
+function beginReading(){
+  setPhase('reading');
+  goBtn.hidden = true;
+  setContact(true);
+}
+
+function setContact(on){
+  touching = on;
+  scrEl.classList.toggle('is-live', on);
+  cText.textContent = on ? 'Contact \u2014 reading' : 'No contact';
+  note.textContent  = on ? STEPS[step].note
+                         : 'Lost contact. Nothing is lost \u2014 tap her when she settles.';
+  plabel.textContent = 'Step ' + (step + 1) + ' \u00B7 ' + (on ? 'reading' : 'paused');
+  if(on){ last = 0; raf = requestAnimationFrame(frame); }
+  else  { cancelAnimationFrame(raf); raf = null; }
+}
+
+function frame(now){
+  if(phase !== 'reading' || !touching) return;
+  if(!last) last = now;
+  stepMs += now - last; last = now;
+
+  // A weak link drops out partway. Show it rather than pretending it can't happen.
+  if(gloveState === 'weak' && !weakFired && stepMs >= STEP_MS * 0.55){
+    weakFired = true;
+    setContact(false);
+    cText.textContent = 'Signal dropped';
+    note.textContent = 'The glove went out of range. Progress is kept \u2014 move closer and tap to carry on.';
+    return;
+  }
+
+  paintMeters();
+  if(stepMs >= STEP_MS){ capture(); return; }
+  raf = requestAnimationFrame(frame);
+}
+
+/* --- 3. captured: ring draws, tick lands, value floats up --- */
+function capture(){
+  cancelAnimationFrame(raf); raf = null;
+  touching = false;
+  stepMs = STEP_MS;
+  setPhase('captured');
+  scrEl.classList.remove('is-live');
+  paintMeters();
+
+  const v = VITALS[step];
+  const shown = v.value.toFixed(v.dp) + (v.key === 'temp' ? '\u00B0' : v.key === 'spo2' ? '%' : '');
+
+  const card = document.getElementById('st-' + step);
+  card.classList.remove('is-now');
+  card.classList.add('is-done');
+  document.getElementById('sv-' + step).textContent = shown;
+
+  popEl.textContent = v.name + ' ' + v.value.toFixed(v.dp) + v.unit;
+  popEl.classList.remove('is-on');
+  void popEl.offsetWidth;
+  popEl.classList.add('is-on');
+
+  counter.textContent = 'Step ' + (step + 1) + ' captured';
+  title.textContent   = v.name + ' \u00B7 ' + v.value.toFixed(v.dp) + v.unit;
+  note.textContent    = STEPS[step].done;
+  cText.textContent   = 'Reading saved';
+  plabel.textContent  = 'Step ' + (step + 1) + ' \u00B7 done';
+
+  const lastStep = step === STEPS.length - 1;
+  if(lastStep) pbar.classList.add('is-done');
+  goBtn.textContent = lastStep ? 'See the report' : 'Next step';
+  goBtn.hidden = false;
+}
+
+goBtn.addEventListener('click', ()=>{
+  if(phase === 'preview'){ beginReading(); return; }
+  if(phase === 'captured'){
+    if(step === STEPS.length - 1){ go('report'); return; }
+    popEl.classList.remove('is-on');
+    step += 1;
+    preview(step);
+  }
+});
+
+stage.addEventListener('click', ()=>{
+  if(phase === 'preview'){ beginReading(); return; }
+  if(phase === 'reading') setContact(!touching);
+});
+
+function resetCapture(){
+  cancelAnimationFrame(raf); raf = null;
+  step = 0; stepMs = 0; last = 0; touching = false; weakFired = false;
+  pbar.classList.remove('is-done');
+  popEl.classList.remove('is-on');
+  liquid.setAttribute('transform','translate(0 100)');
+  hbPct.textContent = '0%';
+  fillEl.style.width = '0%'; pct.textContent = '0%';
+  cText.textContent = 'No contact yet';
+  document.querySelectorAll('.step').forEach(el=>el.classList.remove('is-now','is-done'));
+  VITALS.forEach((v,i)=>{ document.getElementById('sv-'+i).textContent = ''; });
+  preview(0);
+}
+
+/* ---------------- report ---------------- */
+const wrap = document.getElementById('vitals');
+VITALS.forEach(v=>{
+  const pos  = x => ((x - v.min) / (v.max - v.min)) * 100;
+  const warn = v.value < v.lo || v.value > v.hi;
+  const el = document.createElement('div');
+  el.className = 'vital';
+  el.innerHTML =
+    '<div class="vital-top"><span class="vital-name">' + v.name + '</span>' +
+    '<span><span class="num" style="color:' + (warn ? 'var(--rose)' : 'var(--cocoa)') + '">' +
+    v.value.toFixed(v.dp) + '</span><span class="unit">' + v.unit + '</span></span></div>' +
+    '<div class="scale"><div class="band" style="left:' + pos(v.lo) + '%;width:' + (pos(v.hi)-pos(v.lo)) + '%"></div>' +
+    '<div class="pin' + (warn ? ' is-warn' : '') + '" style="left:' + pos(v.value) + '%"></div></div>' +
+    '<div class="scale-legend"><span>' + v.min + '</span><span>Normal ' + v.lo + '–' + v.hi + ' ' + v.unit +
+    '</span><span>' + v.max + '</span></div>';
+  wrap.appendChild(el);
+});
+
+/* ---------------- clinics ---------------- */
+const clist = document.getElementById('clinics');
+CLINICS.forEach(c=>{
+  const b = document.createElement('button');
+  b.className = 'clinic';
+  b.onclick = ()=>go('book');
+  b.innerHTML = '<span class="clinic-dot' + (c.open ? '' : ' is-shut') + '"></span>' +
+    '<span style="flex:1"><b>' + c.name + '</b><span>' + c.note + '</span></span>' +
+    '<span class="dist">' + c.dist + '</span>';
+  clist.appendChild(b);
+});
+
+applyGlove();
+
+/* ---------------- calendar ---------------- */
+const cal = document.getElementById('cal');
+['M','T','W','T','F','S','S'].forEach(d=>{ const s=document.createElement('span'); s.textContent=d; cal.appendChild(s); });
+for(let i=1;i<=31;i++){
+  const b = document.createElement('button');
+  b.className = 'day' + (i<21 ? ' is-off' : '') + (i===23 ? ' is-sel' : '');
+  b.textContent = i;
+  b.onclick = ()=>{ cal.querySelectorAll('.day').forEach(d=>d.classList.remove('is-sel')); b.classList.add('is-sel'); };
+  cal.appendChild(b);
+}
+const slots = document.getElementById('slots');
+['09:00','10:30','11:15','14:00','15:30','16:45'].forEach((t,i)=>{
+  const b = document.createElement('button');
+  b.className = 'slot' + (i===1 ? ' is-sel' : '');
+  b.textContent = t;
+  b.onclick = ()=>{ slots.querySelectorAll('.slot').forEach(s=>s.classList.remove('is-sel')); b.classList.add('is-sel'); };
+  slots.appendChild(b);
+});
+</script>
+</body>
+</html>
