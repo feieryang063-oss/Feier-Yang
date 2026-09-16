@@ -175,6 +175,18 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('resize', updateMinimap);
   }
 
+  /* ---------- Prototype embed: scale the iframe as a whole to fit its box ---------- */
+  var protoBox = document.querySelector('.project-prototype');
+  if (protoBox) {
+    var protoFrame = protoBox.querySelector('iframe');
+    var scaleProto = function () {
+      var scale = protoBox.clientWidth / 434;
+      protoFrame.style.transform = 'scale(' + scale + ')';
+    };
+    scaleProto();
+    window.addEventListener('resize', scaleProto);
+  }
+
   /* ---------- Work tiles: click the hero image itself to jump into the project ---------- */
   document.querySelectorAll('.work-tiles').forEach(function (tiles) {
     var workItem = tiles.closest('.work-item');

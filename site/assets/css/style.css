@@ -325,12 +325,20 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
 .project-cover-left img{ object-position: left center; }
 .project-cover-top img{ object-position: center top; }
 .project-cover-contain img{ object-fit:contain; }
-/* live, clickable phone prototype embed */
+/* live, clickable phone prototype embed. The prototype has its own
+   internal responsive breakpoints keyed to viewport height, which
+   would kick in and shrink the phone if the iframe box itself were
+   small — instead the iframe always renders at its native, full-scale
+   size, and gets scaled down as a whole via CSS transform so the
+   entire phone screen shows, just smaller, never cropped. */
 .project-prototype{
   border-radius: var(--radius); overflow:hidden; margin: 0 auto 50px; background:#F7EFE9;
-  aspect-ratio: 434/934; max-width: 320px;
+  position: relative; width: 100%; max-width: 320px; aspect-ratio: 434/1000;
 }
-.project-prototype iframe{ width:100%; height:100%; border:0; }
+.project-prototype iframe{
+  width: 434px; height: 1000px; border:0;
+  position: absolute; top:0; left:0; transform-origin: top left;
+}
 @media (min-width: 861px){
   .project-prototype{ grid-column: 2; }
 }
