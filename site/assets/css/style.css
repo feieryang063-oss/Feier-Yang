@@ -311,6 +311,7 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
 .project-hero h1{ font-family: var(--display-black); font-size: clamp(1.8rem,2.6vw,2.2rem); margin:16px 0 14px; text-transform:uppercase; line-height:1.05; }
 .project-lede{ color: var(--ink-soft); font-size: 0.94rem; }
 .project-cover{ border-radius: var(--radius); overflow:hidden; background:#fff; aspect-ratio: 1949/1199; }
+.project-cover-dark{ background:#000; }
 @media (min-width: 861px){
   /* same width formula as .work-tiles, so the cover renders at the same
      on-screen size here as it did as the homepage card */
