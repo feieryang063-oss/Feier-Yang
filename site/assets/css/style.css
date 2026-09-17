@@ -353,7 +353,7 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
 /* small animated nudge above the prototype, pointing viewers to interact with it */
 .proto-cta{
   display:flex; align-items:center; justify-content:center; gap:8px; margin: 0 auto; max-width:320px;
-  font-family: var(--mono); font-size:0.82rem; font-weight:600; letter-spacing:.03em; color: var(--salmon-deep);
+  font-family: var(--mono); font-size:0.82rem; font-weight:700; letter-spacing:.03em; color: var(--ink);
 }
 .proto-cta-arrow{ display:inline-block; transform-origin: 15% 15%; animation: proto-cta-wiggle 1.6s ease-in-out infinite; }
 @keyframes proto-cta-wiggle{
