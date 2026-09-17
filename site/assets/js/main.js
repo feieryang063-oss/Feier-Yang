@@ -205,6 +205,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  /* swiping/going back can restore this page from the browser's cache with the
+     fade-out state still applied, leaving it looking blank — clear it on restore */
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) {
+      document.body.classList.remove('is-navigating');
+      document.querySelectorAll('.work-tiles.is-jumping').forEach(function (tiles) {
+        tiles.classList.remove('is-jumping');
+      });
+    }
+  });
+
   /* ---------- Filters ---------- */
   var filterBtns = document.querySelectorAll('.filter-btn');
   var cards = document.querySelectorAll('[data-category]');
