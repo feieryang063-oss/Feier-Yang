@@ -340,7 +340,7 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
    size, and gets scaled down as a whole via CSS transform so the
    entire phone screen shows, just smaller, never cropped. */
 .project-prototype{
-  border-radius: var(--radius); overflow:hidden; margin: 0 auto 50px; background:transparent;
+  border-radius: var(--radius); overflow:hidden; margin: 0 auto; background:transparent;
   position: relative; width: 100%; max-width: 320px; aspect-ratio: 434/1000;
 }
 .project-prototype iframe{
@@ -352,7 +352,7 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
 }
 /* small animated nudge above the prototype, pointing viewers to interact with it */
 .proto-cta{
-  display:flex; align-items:center; justify-content:center; gap:8px; margin: 0 auto 16px; max-width:320px;
+  display:flex; align-items:center; justify-content:center; gap:8px; margin: 0 auto; max-width:320px;
   font-family: var(--mono); font-size:0.82rem; font-weight:600; letter-spacing:.03em; color: var(--salmon-deep);
 }
 .proto-cta-arrow{ display:inline-block; transform-origin: 15% 15%; animation: proto-cta-wiggle 1.6s ease-in-out infinite; }
@@ -360,24 +360,21 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
   0%,100%{ transform: rotate(-4deg) translateY(0); }
   50%{ transform: rotate(6deg) translateY(4px); }
 }
+.proto-cta-text{ display:inline-block; animation: proto-cta-text-wiggle 1.6s ease-in-out infinite; }
+@keyframes proto-cta-text-wiggle{
+  0%,100%{ transform: rotate(-1.5deg) translateY(0); }
+  50%{ transform: rotate(1.5deg) translateY(-2px); }
+}
+@media (prefers-reduced-motion: reduce){ .proto-cta-text{ animation: none; } }
 @media (min-width: 861px){ .proto-cta{ grid-column: 2; } }
 @media (prefers-reduced-motion: reduce){ .proto-cta-arrow{ animation: none; } }
 .project-body{ display:grid; grid-template-columns: minmax(0,1fr); gap: 56px; }
 .project-section{ display:grid; grid-template-columns: 260px 1fr; gap: 40px; padding-bottom: 8px; }
 .project-section h3{ font-family: var(--display-black); font-size:1.15rem; margin:0; text-transform:uppercase; }
 .project-section p{ color: var(--ink-soft); margin:0; }
-/* decorative image sitting behind this section's text, not a separate gallery item */
-.project-section-bg{ position:relative; overflow:hidden; border-radius: var(--radius); padding: 24px; }
-.project-section-bg .section-bg-img{
-  position:absolute; top:0; right:0; height:100%; width:auto; max-width:85%;
-  object-fit:cover; z-index:0; opacity:.4;
-  mask-image: linear-gradient(to right, transparent, #000 45%);
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 45%);
-}
-.project-section-bg h3, .project-section-bg p{ position:relative; z-index:1; }
-@media (max-width: 860px){
-  .project-section-bg{ padding: 20px; }
-  .project-section-bg .section-bg-img{ max-width:100%; opacity:.22; }
+/* illustration sitting below this section's text, in normal flow */
+.project-section .section-img{
+  grid-column: 1 / -1; width:100%; max-width:420px; border-radius: var(--radius); margin-top:16px;
 }
 /* same grid as .work-tiles: fixed 2 columns, same gap, same tile look */
 .project-gallery{
