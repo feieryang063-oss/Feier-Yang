@@ -437,6 +437,18 @@ footer p{ color: var(--ink-soft); font-size:0.82rem; margin:0; font-family: var(
 }
 .reveal.is-visible{ opacity: 1; transform: translateY(0); }
 
+/* filter tags slide in from the left, staggered, the first time they're scrolled into view */
+.filters.reveal-left .filter-btn{
+  opacity: 0; transform: translateX(-24px);
+  transition: opacity .5s cubic-bezier(.2,.7,.3,1), transform .5s cubic-bezier(.2,.7,.3,1);
+}
+.filters.reveal-left .filter-btn:nth-child(1){ transition-delay: 0s; }
+.filters.reveal-left .filter-btn:nth-child(2){ transition-delay: .07s; }
+.filters.reveal-left .filter-btn:nth-child(3){ transition-delay: .14s; }
+.filters.reveal-left .filter-btn:nth-child(4){ transition-delay: .21s; }
+.filters.reveal-left .filter-btn:nth-child(5){ transition-delay: .28s; }
+.filters.reveal-left.is-visible .filter-btn{ opacity: 1; transform: translateX(0); }
+
 /* ---------- Hero entrance (plays once on load) ---------- */
 .hero-copy > *{
   opacity: 0; transform: translateY(18px);

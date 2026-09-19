@@ -161,6 +161,21 @@ document.addEventListener('DOMContentLoaded', function () {
     revealEls.forEach(function (el) { io.observe(el); });
   }
 
+  /* filter tags slide in from the left, staggered, the first time they scroll into view */
+  var filterBar = document.querySelector('.filters');
+  if (filterBar && !reduceMotion && 'IntersectionObserver' in window) {
+    filterBar.classList.add('reveal-left');
+    var filterIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          filterIo.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    filterIo.observe(filterBar);
+  }
+
   /* ---------- Scroll minimap progress ---------- */
   var minimap = document.querySelector('.scroll-minimap');
   if (minimap) {
