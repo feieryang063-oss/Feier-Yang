@@ -235,19 +235,15 @@ a{ color: inherit; text-decoration:none; }
   display:grid; grid-template-columns: 300px 1fr; gap:48px; align-items:start;
   padding-bottom:56px; border-bottom:1.5px solid var(--line);
   scroll-margin-top: 104px;
-  transition: opacity .45s ease;
 }
 .work-item:last-child{ border-bottom:none; padding-bottom:0; }
-/* hovering one work-item quietly dims the rest and lifts its own image into focus */
-.grid:hover .work-item{ opacity:.5; }
-.grid:hover .work-item:hover{ opacity:1; }
-.grid:hover .work-item:hover .work-tiles{
+/* hovering a work-item's own image lifts it, no effect on the other entries */
+.work-item:hover .work-tiles{
   transform: scale(1.018);
   box-shadow: 0 28px 56px -28px rgba(20,24,28,.4);
 }
 @media (prefers-reduced-motion: reduce){
-  .grid:hover .work-item{ opacity:1; }
-  .grid:hover .work-item:hover .work-tiles{ transform:none; box-shadow:none; }
+  .work-item:hover .work-tiles{ transform:none; box-shadow:none; }
 }
 .work-text{ display:flex; flex-direction:column; min-width:0; }
 .work-text h3{
@@ -286,6 +282,7 @@ body.is-navigating{ animation: page-jump-out .38s ease forwards; }
 .work-tile-cover img{ object-fit:cover; }
 .work-tile-cover-left img{ object-position: left center; }
 .work-tile-cover-right img{ object-position: right center; }
+.work-tile-cover-bottom img{ object-position: center 80%; }
 /* fewer than 4 images: one big tile spans the whole grid instead of a partial row */
 .work-tile-solo{ grid-column: span 2; grid-row: span 2; aspect-ratio: 1949/1199; }
 .work-tile-empty{
