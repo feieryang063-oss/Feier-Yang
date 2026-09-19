@@ -282,7 +282,7 @@ body.is-navigating{ animation: page-jump-out .38s ease forwards; }
 .work-tile-cover img{ object-fit:cover; }
 .work-tile-cover-left img{ object-position: left center; }
 .work-tile-cover-right img{ object-position: right center; }
-.work-tile-cover-bottom img{ object-position: center 80%; }
+.work-tile-cover-bottom img{ object-position: center bottom; }
 /* fewer than 4 images: one big tile spans the whole grid instead of a partial row */
 .work-tile-solo{ grid-column: span 2; grid-row: span 2; aspect-ratio: 1949/1199; }
 .work-tile-empty{
